@@ -1,0 +1,199 @@
+
+---
+events:
+  -
+    kind: "message-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.28/Modules/CMakeDetermineSystem.cmake:233 (message)"
+      - "CMakeLists.txt:2 (project)"
+    message: |
+      The system is: Windows - 10.0.19045 - AMD64
+  -
+    kind: "message-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.28/Modules/CMakeDetermineCompilerId.cmake:17 (message)"
+      - "C:/Program Files/CMake/share/cmake-3.28/Modules/CMakeDetermineCompilerId.cmake:64 (__determine_compiler_id_test)"
+      - "C:/Program Files/CMake/share/cmake-3.28/Modules/CMakeDetermineCCompiler.cmake:123 (CMAKE_DETERMINE_COMPILER_ID)"
+      - "CMakeLists.txt:2 (project)"
+    message: |
+      Compiling the C compiler identification source file "CMakeCCompilerId.c" succeeded.
+      Compiler: C:/Program Files (x86)/Microsoft Visual Studio/2019/BuildTools/VC/Tools/MSVC/14.29.30133/bin/Hostx86/x86/cl.exe 
+      Build flags: 
+      Id flags:  
+      
+      The output was:
+      0
+      Microsoft (R) C/C++ Optimizing Compiler Version 19.29.30153 for x86
+      Copyright (C) Microsoft Corporation.  All rights reserved.
+      
+      CMakeCCompilerId.c
+      Microsoft (R) Incremental Linker Version 14.29.30153.0
+      Copyright (C) Microsoft Corporation.  All rights reserved.
+      
+      /out:CMakeCCompilerId.exe 
+      CMakeCCompilerId.obj 
+      
+      
+      Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "CMakeCCompilerId.exe"
+      
+      Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "CMakeCCompilerId.obj"
+      
+      The C compiler identification is MSVC, found in:
+        D:/RP2040/build/elf2uf2/CMakeFiles/3.28.2/CompilerIdC/CMakeCCompilerId.exe
+      
+  -
+    kind: "message-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.28/Modules/CMakeDetermineCompilerId.cmake:1182 (message)"
+      - "C:/Program Files/CMake/share/cmake-3.28/Modules/CMakeDetermineCompilerId.cmake:247 (CMAKE_DETERMINE_MSVC_SHOWINCLUDES_PREFIX)"
+      - "C:/Program Files/CMake/share/cmake-3.28/Modules/CMakeDetermineCCompiler.cmake:123 (CMAKE_DETERMINE_COMPILER_ID)"
+      - "CMakeLists.txt:2 (project)"
+    message: |
+      Detecting C compiler /showIncludes prefix:
+        main.c
+        Note: including file: D:\\RP2040\\build\\elf2uf2\\CMakeFiles\\ShowIncludes\\foo.h
+        
+      Found prefix "Note: including file: "
+  -
+    kind: "message-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.28/Modules/CMakeDetermineCompilerId.cmake:17 (message)"
+      - "C:/Program Files/CMake/share/cmake-3.28/Modules/CMakeDetermineCompilerId.cmake:64 (__determine_compiler_id_test)"
+      - "C:/Program Files/CMake/share/cmake-3.28/Modules/CMakeDetermineCXXCompiler.cmake:126 (CMAKE_DETERMINE_COMPILER_ID)"
+      - "CMakeLists.txt:2 (project)"
+    message: |
+      Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" succeeded.
+      Compiler: C:/Program Files (x86)/Microsoft Visual Studio/2019/BuildTools/VC/Tools/MSVC/14.29.30133/bin/Hostx86/x86/cl.exe 
+      Build flags: 
+      Id flags:  
+      
+      The output was:
+      0
+      Microsoft (R) C/C++ Optimizing Compiler Version 19.29.30153 for x86
+      Copyright (C) Microsoft Corporation.  All rights reserved.
+      
+      CMakeCXXCompilerId.cpp
+      Microsoft (R) Incremental Linker Version 14.29.30153.0
+      Copyright (C) Microsoft Corporation.  All rights reserved.
+      
+      /out:CMakeCXXCompilerId.exe 
+      CMakeCXXCompilerId.obj 
+      
+      
+      Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "CMakeCXXCompilerId.exe"
+      
+      Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "CMakeCXXCompilerId.obj"
+      
+      The CXX compiler identification is MSVC, found in:
+        D:/RP2040/build/elf2uf2/CMakeFiles/3.28.2/CompilerIdCXX/CMakeCXXCompilerId.exe
+      
+  -
+    kind: "message-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.28/Modules/CMakeDetermineCompilerId.cmake:1182 (message)"
+      - "C:/Program Files/CMake/share/cmake-3.28/Modules/CMakeDetermineCompilerId.cmake:247 (CMAKE_DETERMINE_MSVC_SHOWINCLUDES_PREFIX)"
+      - "C:/Program Files/CMake/share/cmake-3.28/Modules/CMakeDetermineCXXCompiler.cmake:126 (CMAKE_DETERMINE_COMPILER_ID)"
+      - "CMakeLists.txt:2 (project)"
+    message: |
+      Detecting CXX compiler /showIncludes prefix:
+        main.c
+        Note: including file: D:\\RP2040\\build\\elf2uf2\\CMakeFiles\\ShowIncludes\\foo.h
+        
+      Found prefix "Note: including file: "
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.28/Modules/CMakeDetermineCompilerABI.cmake:57 (try_compile)"
+      - "C:/Program Files/CMake/share/cmake-3.28/Modules/CMakeTestCCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:2 (project)"
+    checks:
+      - "Detecting C compiler ABI info"
+    directories:
+      source: "D:/RP2040/build/elf2uf2/CMakeFiles/CMakeScratch/TryCompile-i641zi"
+      binary: "D:/RP2040/build/elf2uf2/CMakeFiles/CMakeScratch/TryCompile-i641zi"
+    cmakeVariables:
+      CMAKE_C_FLAGS: "/DWIN32 /D_WINDOWS /W3"
+      CMAKE_C_FLAGS_DEBUG: "/MDd /Zi /Ob0 /Od /RTC1"
+      CMAKE_EXE_LINKER_FLAGS: "/machine:X86"
+    buildResult:
+      variable: "CMAKE_C_ABI_COMPILED"
+      cached: true
+      stdout: |
+        Change Dir: 'D:/RP2040/build/elf2uf2/CMakeFiles/CMakeScratch/TryCompile-i641zi'
+        
+        Run Build Command(s): "C:/Program Files/CMake/bin/cmake.exe" -E env VERBOSE=1 C:/msys64/ucrt64/bin/mingw32-make.exe -f Makefile cmTC_cf68c/fast
+        mingw32-make[4]: Entering directory 'D:/RP2040/build/elf2uf2/CMakeFiles/CMakeScratch/TryCompile-i641zi'
+        C:/msys64/ucrt64/bin/mingw32-make.exe  -f CMakeFiles\\cmTC_cf68c.dir\\build.make CMakeFiles/cmTC_cf68c.dir/build
+        mingw32-make[5]: Entering directory 'D:/RP2040/build/elf2uf2/CMakeFiles/CMakeScratch/TryCompile-i641zi'
+        Building C object CMakeFiles/cmTC_cf68c.dir/CMakeCCompilerABI.c.obj
+        "C:\\Program Files\\CMake\\bin\\cmake.exe" -E cmake_cl_compile_depends --dep-file=CMakeFiles\\cmTC_cf68c.dir\\CMakeCCompilerABI.c.obj.d --working-dir=D:\\RP2040\\build\\elf2uf2\\CMakeFiles\\CMakeScratch\\TryCompile-i641zi --filter-prefix="Note: including file: " -- C:\\PROGRA~2\\MICROS~4\\2019\\BUILDT~1\\VC\\Tools\\MSVC\\1429~1.301\\bin\\Hostx86\\x86\\cl.exe  /nologo   /DWIN32 /D_WINDOWS /W3  /MDd /Zi /Ob0 /Od /RTC1 /showIncludes /FoCMakeFiles\\cmTC_cf68c.dir\\CMakeCCompilerABI.c.obj /FdCMakeFiles\\cmTC_cf68c.dir/ /FS -c "C:\\Program Files\\CMake\\share\\cmake-3.28\\Modules\\CMakeCCompilerABI.c"
+        CMakeCCompilerABI.c
+        Linking C executable cmTC_cf68c.exe
+        "C:\\Program Files\\CMake\\bin\\cmake.exe" -E cmake_link_script CMakeFiles\\cmTC_cf68c.dir\\link.txt --verbose=1
+        "C:\\Program Files\\CMake\\bin\\cmake.exe" -E vs_link_exe --intdir=CMakeFiles\\cmTC_cf68c.dir --rc=C:\\PROGRA~2\\WI3CF2~1\\10\\bin\\100190~1.0\\x86\\rc.exe --mt=C:\\PROGRA~2\\WI3CF2~1\\10\\bin\\100190~1.0\\x86\\mt.exe --manifests -- C:\\PROGRA~2\\MICROS~4\\2019\\BUILDT~1\\VC\\Tools\\MSVC\\1429~1.301\\bin\\Hostx86\\x86\\link.exe /nologo @CMakeFiles\\cmTC_cf68c.dir\\objects1.rsp  /out:cmTC_cf68c.exe /implib:cmTC_cf68c.lib /pdb:D:\\RP2040\\build\\elf2uf2\\CMakeFiles\\CMakeScratch\\TryCompile-i641zi\\cmTC_cf68c.pdb /version:0.0 /machine:X86  /debug /INCREMENTAL /subsystem:console  kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib 
+        Visual Studio Incremental Link with embedded manifests
+        Create CMakeFiles\\cmTC_cf68c.dir/manifest.rc
+        Create empty: CMakeFiles\\cmTC_cf68c.dir/embed.manifest
+        RC Pass 1:
+        C:\\PROGRA~2\\WI3CF2~1\\10\\bin\\100190~1.0\\x86\\rc.exe /fo CMakeFiles\\cmTC_cf68c.dir/manifest.res CMakeFiles\\cmTC_cf68c.dir/manifest.rc
+        LINK Pass 1:
+        C:\\PROGRA~2\\MICROS~4\\2019\\BUILDT~1\\VC\\Tools\\MSVC\\1429~1.301\\bin\\Hostx86\\x86\\link.exe /nologo @CMakeFiles\\cmTC_cf68c.dir\\objects1.rsp /out:cmTC_cf68c.exe /implib:cmTC_cf68c.lib /pdb:D:\\RP2040\\build\\elf2uf2\\CMakeFiles\\CMakeScratch\\TryCompile-i641zi\\cmTC_cf68c.pdb /version:0.0 /machine:X86 /debug /INCREMENTAL /subsystem:console kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTFILE:CMakeFiles\\cmTC_cf68c.dir/intermediate.manifest CMakeFiles\\cmTC_cf68c.dir/manifest.res
+        MT:
+        C:\\PROGRA~2\\WI3CF2~1\\10\\bin\\100190~1.0\\x86\\mt.exe /nologo /manifest CMakeFiles\\cmTC_cf68c.dir/intermediate.manifest /out:CMakeFiles\\cmTC_cf68c.dir/embed.manifest /notify_update
+        RC Pass 2:
+        C:\\PROGRA~2\\WI3CF2~1\\10\\bin\\100190~1.0\\x86\\rc.exe /fo CMakeFiles\\cmTC_cf68c.dir/manifest.res CMakeFiles\\cmTC_cf68c.dir/manifest.rc
+        FINAL LINK:
+        C:\\PROGRA~2\\MICROS~4\\2019\\BUILDT~1\\VC\\Tools\\MSVC\\1429~1.301\\bin\\Hostx86\\x86\\link.exe /nologo @CMakeFiles\\cmTC_cf68c.dir\\objects1.rsp /out:cmTC_cf68c.exe /implib:cmTC_cf68c.lib /pdb:D:\\RP2040\\build\\elf2uf2\\CMakeFiles\\CMakeScratch\\TryCompile-i641zi\\cmTC_cf68c.pdb /version:0.0 /machine:X86 /debug /INCREMENTAL /subsystem:console kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTFILE:CMakeFiles\\cmTC_cf68c.dir/intermediate.manifest CMakeFiles\\cmTC_cf68c.dir/manifest.res
+        mingw32-make[5]: Leaving directory 'D:/RP2040/build/elf2uf2/CMakeFiles/CMakeScratch/TryCompile-i641zi'
+        mingw32-make[4]: Leaving directory 'D:/RP2040/build/elf2uf2/CMakeFiles/CMakeScratch/TryCompile-i641zi'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.28/Modules/CMakeDetermineCompilerABI.cmake:57 (try_compile)"
+      - "C:/Program Files/CMake/share/cmake-3.28/Modules/CMakeTestCXXCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:2 (project)"
+    checks:
+      - "Detecting CXX compiler ABI info"
+    directories:
+      source: "D:/RP2040/build/elf2uf2/CMakeFiles/CMakeScratch/TryCompile-s1t5hz"
+      binary: "D:/RP2040/build/elf2uf2/CMakeFiles/CMakeScratch/TryCompile-s1t5hz"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: "/DWIN32 /D_WINDOWS /W3 /GR /EHsc"
+      CMAKE_CXX_FLAGS_DEBUG: "/MDd /Zi /Ob0 /Od /RTC1"
+      CMAKE_EXE_LINKER_FLAGS: "/machine:X86"
+    buildResult:
+      variable: "CMAKE_CXX_ABI_COMPILED"
+      cached: true
+      stdout: |
+        Change Dir: 'D:/RP2040/build/elf2uf2/CMakeFiles/CMakeScratch/TryCompile-s1t5hz'
+        
+        Run Build Command(s): "C:/Program Files/CMake/bin/cmake.exe" -E env VERBOSE=1 C:/msys64/ucrt64/bin/mingw32-make.exe -f Makefile cmTC_17bff/fast
+        mingw32-make[4]: Entering directory 'D:/RP2040/build/elf2uf2/CMakeFiles/CMakeScratch/TryCompile-s1t5hz'
+        C:/msys64/ucrt64/bin/mingw32-make.exe  -f CMakeFiles\\cmTC_17bff.dir\\build.make CMakeFiles/cmTC_17bff.dir/build
+        mingw32-make[5]: Entering directory 'D:/RP2040/build/elf2uf2/CMakeFiles/CMakeScratch/TryCompile-s1t5hz'
+        Building CXX object CMakeFiles/cmTC_17bff.dir/CMakeCXXCompilerABI.cpp.obj
+        "C:\\Program Files\\CMake\\bin\\cmake.exe" -E cmake_cl_compile_depends --dep-file=CMakeFiles\\cmTC_17bff.dir\\CMakeCXXCompilerABI.cpp.obj.d --working-dir=D:\\RP2040\\build\\elf2uf2\\CMakeFiles\\CMakeScratch\\TryCompile-s1t5hz --filter-prefix="Note: including file: " -- C:\\PROGRA~2\\MICROS~4\\2019\\BUILDT~1\\VC\\Tools\\MSVC\\1429~1.301\\bin\\Hostx86\\x86\\cl.exe  /nologo /TP   /DWIN32 /D_WINDOWS /W3 /GR /EHsc  /MDd /Zi /Ob0 /Od /RTC1 /showIncludes /FoCMakeFiles\\cmTC_17bff.dir\\CMakeCXXCompilerABI.cpp.obj /FdCMakeFiles\\cmTC_17bff.dir/ /FS -c "C:\\Program Files\\CMake\\share\\cmake-3.28\\Modules\\CMakeCXXCompilerABI.cpp"
+        CMakeCXXCompilerABI.cpp
+        Linking CXX executable cmTC_17bff.exe
+        "C:\\Program Files\\CMake\\bin\\cmake.exe" -E cmake_link_script CMakeFiles\\cmTC_17bff.dir\\link.txt --verbose=1
+        "C:\\Program Files\\CMake\\bin\\cmake.exe" -E vs_link_exe --intdir=CMakeFiles\\cmTC_17bff.dir --rc=C:\\PROGRA~2\\WI3CF2~1\\10\\bin\\100190~1.0\\x86\\rc.exe --mt=C:\\PROGRA~2\\WI3CF2~1\\10\\bin\\100190~1.0\\x86\\mt.exe --manifests -- C:\\PROGRA~2\\MICROS~4\\2019\\BUILDT~1\\VC\\Tools\\MSVC\\1429~1.301\\bin\\Hostx86\\x86\\link.exe /nologo @CMakeFiles\\cmTC_17bff.dir\\objects1.rsp  /out:cmTC_17bff.exe /implib:cmTC_17bff.lib /pdb:D:\\RP2040\\build\\elf2uf2\\CMakeFiles\\CMakeScratch\\TryCompile-s1t5hz\\cmTC_17bff.pdb /version:0.0 /machine:X86  /debug /INCREMENTAL /subsystem:console  kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib 
+        Visual Studio Incremental Link with embedded manifests
+        Create CMakeFiles\\cmTC_17bff.dir/manifest.rc
+        Create empty: CMakeFiles\\cmTC_17bff.dir/embed.manifest
+        RC Pass 1:
+        C:\\PROGRA~2\\WI3CF2~1\\10\\bin\\100190~1.0\\x86\\rc.exe /fo CMakeFiles\\cmTC_17bff.dir/manifest.res CMakeFiles\\cmTC_17bff.dir/manifest.rc
+        LINK Pass 1:
+        C:\\PROGRA~2\\MICROS~4\\2019\\BUILDT~1\\VC\\Tools\\MSVC\\1429~1.301\\bin\\Hostx86\\x86\\link.exe /nologo @CMakeFiles\\cmTC_17bff.dir\\objects1.rsp /out:cmTC_17bff.exe /implib:cmTC_17bff.lib /pdb:D:\\RP2040\\build\\elf2uf2\\CMakeFiles\\CMakeScratch\\TryCompile-s1t5hz\\cmTC_17bff.pdb /version:0.0 /machine:X86 /debug /INCREMENTAL /subsystem:console kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTFILE:CMakeFiles\\cmTC_17bff.dir/intermediate.manifest CMakeFiles\\cmTC_17bff.dir/manifest.res
+        MT:
+        C:\\PROGRA~2\\WI3CF2~1\\10\\bin\\100190~1.0\\x86\\mt.exe /nologo /manifest CMakeFiles\\cmTC_17bff.dir/intermediate.manifest /out:CMakeFiles\\cmTC_17bff.dir/embed.manifest /notify_update
+        RC Pass 2:
+        C:\\PROGRA~2\\WI3CF2~1\\10\\bin\\100190~1.0\\x86\\rc.exe /fo CMakeFiles\\cmTC_17bff.dir/manifest.res CMakeFiles\\cmTC_17bff.dir/manifest.rc
+        FINAL LINK:
+        C:\\PROGRA~2\\MICROS~4\\2019\\BUILDT~1\\VC\\Tools\\MSVC\\1429~1.301\\bin\\Hostx86\\x86\\link.exe /nologo @CMakeFiles\\cmTC_17bff.dir\\objects1.rsp /out:cmTC_17bff.exe /implib:cmTC_17bff.lib /pdb:D:\\RP2040\\build\\elf2uf2\\CMakeFiles\\CMakeScratch\\TryCompile-s1t5hz\\cmTC_17bff.pdb /version:0.0 /machine:X86 /debug /INCREMENTAL /subsystem:console kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTFILE:CMakeFiles\\cmTC_17bff.dir/intermediate.manifest CMakeFiles\\cmTC_17bff.dir/manifest.res
+        mingw32-make[5]: Leaving directory 'D:/RP2040/build/elf2uf2/CMakeFiles/CMakeScratch/TryCompile-s1t5hz'
+        mingw32-make[4]: Leaving directory 'D:/RP2040/build/elf2uf2/CMakeFiles/CMakeScratch/TryCompile-s1t5hz'
+        
+      exitCode: 0
+...
