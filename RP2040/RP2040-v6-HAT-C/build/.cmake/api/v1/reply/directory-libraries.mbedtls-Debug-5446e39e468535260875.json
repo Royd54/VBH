@@ -1,0 +1,76 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"install"
+		],
+		"files" : 
+		[
+			"libraries/mbedtls/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 317,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 327,
+				"parent" : 0
+			}
+		]
+	},
+	"installers" : 
+	[
+		{
+			"backtrace" : 1,
+			"component" : "Unspecified",
+			"destination" : "cmake",
+			"paths" : 
+			[
+				"build/libraries/mbedtls/cmake/MbedTLSConfig.cmake",
+				"build/libraries/mbedtls/cmake/MbedTLSConfigVersion.cmake"
+			],
+			"type" : "file"
+		},
+		{
+			"backtrace" : 2,
+			"component" : "Unspecified",
+			"destination" : "cmake",
+			"exportName" : "MbedTLSTargets",
+			"exportTargets" : 
+			[
+				{
+					"id" : "mbedcrypto::@5057db8c34de054eb6c6",
+					"index" : 17
+				},
+				{
+					"id" : "mbedx509::@5057db8c34de054eb6c6",
+					"index" : 19
+				},
+				{
+					"id" : "mbedtls::@5057db8c34de054eb6c6",
+					"index" : 18
+				}
+			],
+			"paths" : 
+			[
+				"libraries/mbedtls/CMakeFiles/Export/272ceadb8458515b2ae4b5630a6029cc/MbedTLSTargets.cmake"
+			],
+			"type" : "export"
+		}
+	],
+	"paths" : 
+	{
+		"build" : "libraries/mbedtls",
+		"source" : "libraries/mbedtls"
+	}
+}

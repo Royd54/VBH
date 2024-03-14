@@ -1,0 +1,2 @@
+C:\msys64\ucrt64\bin\ar.exe qc libDHCP6_FILES.a CMakeFiles/DHCP6_FILES.dir/io6Library/Internet/DHCP6/dhcpv6.c.obj
+C:\msys64\ucrt64\bin\ranlib.exe libDHCP6_FILES.a

@@ -1,0 +1,2 @@
+C:\msys64\ucrt64\bin\ar.exe qc libDHCP4_FILES.a CMakeFiles/DHCP4_FILES.dir/io6Library/Internet/DHCP4/dhcpv4.c.obj
+C:\msys64\ucrt64\bin\ranlib.exe libDHCP4_FILES.a
