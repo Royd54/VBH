@@ -29,6 +29,7 @@ void settingsInput(void);
 void print_debug_console(char message[]); 
 int32_t init_server_socket(uint8_t sn, uint8_t* buf, uint16_t port);
 void debug_socket_behaviour(uint8_t *buf, datasize_t len, uint8_t owning_socket);
+void copyToSerial(uint8_t *buf, datasize_t len, uint8_t owning_socket);
 void transmitHexCommand(uint8_t *buf);
 
 int menuIndex = 0;
@@ -40,7 +41,7 @@ char lastChar = 0;
 static wiz_NetInfo g_net_info =
     {
         .mac = {0x00, 0x08, 0xDC, 0x12, 0x34, 0x56}, // MAC address
-        .ip = {169, 254, 93, 240},                   // IP address 169, 254, 93, 240
+        .ip = {10, 12, 99, 215},                   // IP address 169, 254, 93, 240
         .sn = {255, 255, 0, 0},                      // Subnet Mask
         .gw = {169, 254, 93, 220},                   // Gateway
         .dns = {8, 8, 8, 8},                         // DNS server
@@ -114,7 +115,7 @@ int32_t init_server_socket(uint8_t sn, uint8_t *buf, uint16_t port)
             while (received_size != sentsize)
             {
                 debug_socket_behaviour(buf + sentsize, received_size - sentsize, sn); //Run debugging behaviour
-                if(sn != DEBUG_SOCKET_TCP_SERVER)ret = send(sn, buf + sentsize, received_size - sentsize); //Send the data if the socket is not the debug socket
+                //if(sn != DEBUG_SOCKET_TCP_SERVER)ret = send(sn, buf + sentsize, received_size - sentsize); //Send the data if the socket is not the debug socket
                 if (ret < 0)
                 {
                     close(sn);
@@ -143,7 +144,7 @@ int32_t init_server_socket(uint8_t sn, uint8_t *buf, uint16_t port)
             while (received_size != sentsize)
             {
                 debug_socket_behaviour(buf + sentsize, received_size - sentsize, sn); //Run debugging behaviour
-                if(sn != DEBUG_SOCKET_TCP_SERVER)ret = send(sn, buf + sentsize, received_size - sentsize); //Send the data if the socket is not the debug socket
+                //if(sn != DEBUG_SOCKET_TCP_SERVER)ret = send(sn, buf + sentsize, received_size - sentsize); //Send the data if the socket is not the debug socket
                 if (ret < 0)
                 {
                     close(sn);
@@ -344,14 +345,30 @@ unsigned int combineChars(char char1, char char2, char char3) {
 void transmitHexCommand(uint8_t *buf){
     uint8_t txbuf[27]; //27 is the max command length of the audio board protocol
     int stop_index = -1;
+    // for (int i = 0; i < 27; i++) {
+    //     printf("%x", buf[i]); // Print in hexadecimal format
+    // }
+    // // Loop trough max size of the command buffer (size indicates number of hex values)
+    // for (int i = 0; i < 27; i++) {
+    //     sscanf(buf + (i * 2), "%2hhx", &txbuf[i]); // Convert each pair of hexadecimal characters to uint8_t
+    //     if(txbuf[i] == 85) stop_index = i; continue;// Check if 0x55 is seen (this is the end bit for the audio board's protocol)
+    // }
+
+    // //Print the converted values with the "0x" format for verification
+    // for (int i = 0; i < stop_index + 1; i++) {
+    //     printf("txbuf[%d] = 0x%02X\n", i, txbuf[i]);
+    // }
 
     // Loop trough max size of the command buffer (size indicates number of hex values)
     for (int i = 0; i < 27; i++) {
-        sscanf(buf + (i * 2), "%2hhx", &txbuf[i]); // Convert each pair of hexadecimal characters to uint8_t
-        if(txbuf[i] == 85) stop_index = i; continue;// Check if 0x55 is seen (this is the end bit for the audio board's protocol)
+        txbuf[i] = (uint8_t)buf[i]; // Assign each byte to txbuf
+        if (txbuf[i] == 0x55) {
+            stop_index = i;
+            break; // Stop if 0x55 is found
+        }
     }
 
-    // Print the converted values with the "0x" format for verification
+    // //Print the converted values with the "0x" format for verification
     // for (int i = 0; i < stop_index + 1; i++) {
     //     printf("txbuf[%d] = 0x%02X\n", i, txbuf[i]);
     // }
@@ -363,7 +380,47 @@ void transmitHexCommand(uint8_t *buf){
     }
 }
 
-//function for checking wich mennu behaviour needs to be used
+//function for adding a suffix to the tenlet message, to improve readablity
+uint8_t* assignTelnetSuffix(uint8_t *buf, datasize_t len){
+    uint8_t *new_buf = malloc(len + 2);
+    memcpy(new_buf, buf, len);
+    new_buf[len] = '\r';
+    new_buf[len+1] = '\n';
+    free(new_buf);
+    return new_buf;
+}
+
+//funcion for formatting a HEX message (when using \x0f\x0A for example), so that telnet can show it correctly 
+void hexToTelnet(uint8_t *buf){
+    int stop_index = 0;
+    // Check hex command length
+    for (int i = 0; i < 27; i++) {       
+        if ((uint8_t)buf[i] == 0x55) {
+            stop_index = i;
+            break; // Stop if 0x55 is found
+        }
+    }
+
+    int len = stop_index+1; // Define the length of the buffer
+    char formatted_output[len * 4]; // Assuming each byte is represented as "0xHH" and considering potential null terminators
+
+    // Format the buffer contents into a string
+    int formatted_length = 0;
+    for (int i = 0; i < len; i++) {
+        formatted_length += sprintf(formatted_output + formatted_length, "0x%02X", buf[i]); // formatting hex
+    }
+
+    // Allocate memory for the result as char pointer
+    char *result = malloc(formatted_length + 1); // +1 for null terminator
+
+    // Copy the formatted string into the result
+    strcpy(result, formatted_output);
+    //printf("Result: %s\n", result);
+    free(result);
+    send(3, assignTelnetSuffix(result, formatted_length), formatted_length+2);
+}
+
+//function for checking wich menu behaviour needs to be used
 void debug_socket_behaviour(uint8_t *buf, datasize_t len, uint8_t owning_socket)
 {
     lastChar = 0;
@@ -394,13 +451,18 @@ void debug_socket_behaviour(uint8_t *buf, datasize_t len, uint8_t owning_socket)
 
     if(owning_socket == socket_to_debug) //Check if the current socket needs to copy its messages to the debug socket
     {
-        uint8_t *new_buf = malloc(len + 2);
-        memcpy(new_buf, buf, len);
-        new_buf[len] = '\r';
-        new_buf[len+1] = '\n';
-        free(new_buf);
-        send(3, new_buf, len+2);
-    }
+        // Check if the incomming message is a HEX command that needs to be formatted for telnet
+        if(owning_socket != AUDIO_SOCKET_TCP_SERVER){ send(3, assignTelnetSuffix(buf, len), len+2);}
+        else hexToTelnet(buf);
+    }   
+    copyToSerial(buf, len, owning_socket);////////////////////////////////////////////////////////////////////////////////////////////////////
+}
+
+//function for sending the TCP data to the linked UART
+void copyToSerial(uint8_t *buf, datasize_t len, uint8_t owning_socket){
+    const char* data_uart = buf;
+    if(owning_socket == 0)hardware_UART_send_data(UART0_ID, buf);
+    if(owning_socket == 1)hardware_UART_send_data(UART1_ID, buf);
 }
 
 //function for checking wich menu needs to be shown on the screen (Telnet)

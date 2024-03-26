@@ -31,15 +31,15 @@
 #define SOCKET3_TCP_SERVER 2
 
 /* Ports */
-#define PORT1_TCP_SERVER 5000
-#define PORT2_TCP_SERVER 5001
-#define PORT3_TCP_SERVER 5002
+#define PORT1_TCP_SERVER 5001
+#define PORT2_TCP_SERVER 5002
+#define PORT3_TCP_SERVER 5000
 #define DEBUG_PORT_TCP_SERVER 23
 
 #define RETRY_CNT   10000
 
 uint8_t tcp_client_destip[] = {
-    192, 168, 50, 103
+    169, 254, 93, 240
 };
 
 /* Loopback */
@@ -122,10 +122,10 @@ int main()
     char n = readCharFromFlash(((ADDRESS + (SIZE*2)) + 0), 8);
 
     //Assign values to the correct segment of the IP
-    g_net_info.ip[0] = a;
-    g_net_info.ip[1] = b;
-    g_net_info.ip[2] = c;
-    g_net_info.ip[3] = d;
+    // g_net_info.ip[0] = a;
+    // g_net_info.ip[1] = b;
+    // g_net_info.ip[2] = c;
+    // g_net_info.ip[3] = d;
 
     // Convert characters from flash memory to a buatrate
     int combinedInt = 0;
@@ -189,11 +189,11 @@ int main()
         // printf("SoftwareRX: %s\n", received_data2);
         // sleep_ms(100);
 
-        // UART_receiveData(UART0_ID);
-        // sleep_ms(1000); 
+        UART_receiveData(UART0_ID, socket_to_debug);
+        sleep_ms(25); 
 
-        // UART_receiveData(UART1_ID);
-        // sleep_ms(1000); 
+        //UART_receiveData(UART1_ID);
+        // //sleep_ms(50); 
 
         socket_behaviour(SOCKET1_TCP_SERVER, PORT1_TCP_SERVER, &messageReceivedTimer1);
         socket_behaviour(SOCKET2_TCP_SERVER, PORT2_TCP_SERVER, &messageReceivedTimer2);
@@ -255,9 +255,9 @@ void socket_behaviour(char socket, uint16_t port, uint16_t *timer)
         {
             if(recv(socket, buf, 2048) == 0) //Check if a message is received
             {
-                printf("Disconnected socket %d, due to inactivity\r\n", socket); //Print debug to server
-                if(socket == socket_to_debug) send(DEBUG_SOCKET_TCP_SERVER, "Disconnected, due to inactivity\r\n", 31); //Print debug to debug socket
-                send(socket, "Disconnected, due to inactivity\r\n", 31); //Print debug to disconnecting socket
+                printf("\r\nDisconnected socket %d, due to inactivity\r\n", socket); //Print debug to server
+                if(socket == socket_to_debug) send(DEBUG_SOCKET_TCP_SERVER, "\r\nDisconnected, due to inactivity\r\n", 33); //Print debug to debug socket
+                //send(socket, "Disconnected, due to inactivity\r\n", 31); //Print debug to disconnecting socket (uncomment if needed)
                 disconnect(socket);
             }
             *timer = 0; //reset timer

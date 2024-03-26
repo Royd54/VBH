@@ -99,7 +99,7 @@ void software_UART_send_string(uint8_t gpio_pin, const char *str) {
 }
 
 //Function for handeling data
-void UART_receiveData(uart_inst_t *uart) {
+void UART_receiveData(uart_inst_t *uart, char socket_to_debug) {
     char received_data[MAX_DATA_LENGTH];
     int data_index = 0; //Char index from data
     int uart_index = 0; //Int for making the used uart visible
@@ -109,14 +109,22 @@ void UART_receiveData(uart_inst_t *uart) {
 
     while (uart_is_readable(uart)) {
         char receivedChar = uart_getc(uart);
-        if (receivedChar == '\n') {             //End of data string
-            received_data[data_index] = '\0';   //Null-terminate string
-            printf("Received Data: %s on Uart%d\n", received_data, uart_index);
-            //send(3, received_data, data_index);
+        if ((receivedChar == '\n' || receivedChar == '\r')) {
+            if(data_index > 0){
+            //received_data[data_index++] = '\n'; // Add '\n' and '\r' at the end of the string
+            received_data[data_index++] = receivedChar;
+            received_data[data_index++] = '\n';
+            // received_data[data_index] = '\n';
+            // received_data[data_index++] = '\r';
+            //received_data[data_index] = '\0'; // null-terminate string
+            //printf("Received Data: %s on Uart%d\n", received_data, uart_index);
+            send(uart_index, received_data, data_index);
+            if(socket_to_debug == uart_index)send(3, received_data, data_index);
+            }
             data_index = 0;  //Reset
         } else {
             received_data[data_index++] = receivedChar;
-            if (data_index >= MAX_DATA_LENGTH - 1) {
+            if (data_index >= MAX_DATA_LENGTH - 1) {//was -1
                 data_index = 0;  //Reset 
             }
         }
