@@ -1,2 +1,0 @@
-C:\msys64\ucrt64\bin\ar.exe qc libETHERNET_FILES.a CMakeFiles/ETHERNET_FILES.dir/io6Library/Ethernet/socket.c.obj CMakeFiles/ETHERNET_FILES.dir/io6Library/Ethernet/wizchip_conf.c.obj CMakeFiles/ETHERNET_FILES.dir/io6Library/Ethernet/W6100/w6100.c.obj
-C:\msys64\ucrt64\bin\ranlib.exe libETHERNET_FILES.a

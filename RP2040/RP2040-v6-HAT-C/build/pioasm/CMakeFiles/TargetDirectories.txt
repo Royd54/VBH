@@ -1,3 +1,0 @@
-D:/RP2040/RP2040-v6-HAT-C/build/pioasm/CMakeFiles/pioasm.dir
-D:/RP2040/RP2040-v6-HAT-C/build/pioasm/CMakeFiles/edit_cache.dir
-D:/RP2040/RP2040-v6-HAT-C/build/pioasm/CMakeFiles/rebuild_cache.dir

@@ -1,3 +1,0 @@
-file(REMOVE_RECURSE
-  "libDHCP4_FILES.a"
-)
