@@ -1,0 +1,13 @@
+# Target labels
+ ELF2UF2Build
+# Source files and their labels
+D:/VBH/dev/RP2040-v6-HAT-C/build/examples/loopback/CMakeFiles/ELF2UF2Build
+D:/VBH/dev/RP2040-v6-HAT-C/build/examples/loopback/CMakeFiles/ELF2UF2Build.rule
+D:/VBH/dev/RP2040-v6-HAT-C/build/examples/loopback/CMakeFiles/ELF2UF2Build-complete.rule
+D:/VBH/dev/RP2040-v6-HAT-C/build/examples/loopback/elf2uf2/src/ELF2UF2Build-stamp/ELF2UF2Build-build.rule
+D:/VBH/dev/RP2040-v6-HAT-C/build/examples/loopback/elf2uf2/src/ELF2UF2Build-stamp/ELF2UF2Build-configure.rule
+D:/VBH/dev/RP2040-v6-HAT-C/build/examples/loopback/elf2uf2/src/ELF2UF2Build-stamp/ELF2UF2Build-download.rule
+D:/VBH/dev/RP2040-v6-HAT-C/build/examples/loopback/elf2uf2/src/ELF2UF2Build-stamp/ELF2UF2Build-install.rule
+D:/VBH/dev/RP2040-v6-HAT-C/build/examples/loopback/elf2uf2/src/ELF2UF2Build-stamp/ELF2UF2Build-mkdir.rule
+D:/VBH/dev/RP2040-v6-HAT-C/build/examples/loopback/elf2uf2/src/ELF2UF2Build-stamp/ELF2UF2Build-patch.rule
+D:/VBH/dev/RP2040-v6-HAT-C/build/examples/loopback/elf2uf2/src/ELF2UF2Build-stamp/ELF2UF2Build-update.rule

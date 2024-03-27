@@ -1,0 +1,135 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"install"
+		],
+		"files" : 
+		[
+			"libraries/mbedtls/include/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 8,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 12,
+				"parent" : 0
+			}
+		]
+	},
+	"installers" : 
+	[
+		{
+			"backtrace" : 1,
+			"component" : "Unspecified",
+			"destination" : "include/mbedtls",
+			"paths" : 
+			[
+				"libraries/mbedtls/include/mbedtls/aes.h",
+				"libraries/mbedtls/include/mbedtls/aria.h",
+				"libraries/mbedtls/include/mbedtls/asn1.h",
+				"libraries/mbedtls/include/mbedtls/asn1write.h",
+				"libraries/mbedtls/include/mbedtls/base64.h",
+				"libraries/mbedtls/include/mbedtls/bignum.h",
+				"libraries/mbedtls/include/mbedtls/build_info.h",
+				"libraries/mbedtls/include/mbedtls/camellia.h",
+				"libraries/mbedtls/include/mbedtls/ccm.h",
+				"libraries/mbedtls/include/mbedtls/chacha20.h",
+				"libraries/mbedtls/include/mbedtls/chachapoly.h",
+				"libraries/mbedtls/include/mbedtls/check_config.h",
+				"libraries/mbedtls/include/mbedtls/cipher.h",
+				"libraries/mbedtls/include/mbedtls/cmac.h",
+				"libraries/mbedtls/include/mbedtls/compat-2.x.h",
+				"libraries/mbedtls/include/mbedtls/config_psa.h",
+				"libraries/mbedtls/include/mbedtls/ctr_drbg.h",
+				"libraries/mbedtls/include/mbedtls/debug.h",
+				"libraries/mbedtls/include/mbedtls/des.h",
+				"libraries/mbedtls/include/mbedtls/dhm.h",
+				"libraries/mbedtls/include/mbedtls/ecdh.h",
+				"libraries/mbedtls/include/mbedtls/ecdsa.h",
+				"libraries/mbedtls/include/mbedtls/ecjpake.h",
+				"libraries/mbedtls/include/mbedtls/ecp.h",
+				"libraries/mbedtls/include/mbedtls/entropy.h",
+				"libraries/mbedtls/include/mbedtls/error.h",
+				"libraries/mbedtls/include/mbedtls/gcm.h",
+				"libraries/mbedtls/include/mbedtls/hkdf.h",
+				"libraries/mbedtls/include/mbedtls/hmac_drbg.h",
+				"libraries/mbedtls/include/mbedtls/mbedtls_config.h",
+				"libraries/mbedtls/include/mbedtls/md.h",
+				"libraries/mbedtls/include/mbedtls/md5.h",
+				"libraries/mbedtls/include/mbedtls/memory_buffer_alloc.h",
+				"libraries/mbedtls/include/mbedtls/net_sockets.h",
+				"libraries/mbedtls/include/mbedtls/nist_kw.h",
+				"libraries/mbedtls/include/mbedtls/oid.h",
+				"libraries/mbedtls/include/mbedtls/pem.h",
+				"libraries/mbedtls/include/mbedtls/pk.h",
+				"libraries/mbedtls/include/mbedtls/pkcs12.h",
+				"libraries/mbedtls/include/mbedtls/pkcs5.h",
+				"libraries/mbedtls/include/mbedtls/platform.h",
+				"libraries/mbedtls/include/mbedtls/platform_time.h",
+				"libraries/mbedtls/include/mbedtls/platform_util.h",
+				"libraries/mbedtls/include/mbedtls/poly1305.h",
+				"libraries/mbedtls/include/mbedtls/private_access.h",
+				"libraries/mbedtls/include/mbedtls/psa_util.h",
+				"libraries/mbedtls/include/mbedtls/ripemd160.h",
+				"libraries/mbedtls/include/mbedtls/rsa.h",
+				"libraries/mbedtls/include/mbedtls/sha1.h",
+				"libraries/mbedtls/include/mbedtls/sha256.h",
+				"libraries/mbedtls/include/mbedtls/sha512.h",
+				"libraries/mbedtls/include/mbedtls/ssl.h",
+				"libraries/mbedtls/include/mbedtls/ssl_cache.h",
+				"libraries/mbedtls/include/mbedtls/ssl_ciphersuites.h",
+				"libraries/mbedtls/include/mbedtls/ssl_cookie.h",
+				"libraries/mbedtls/include/mbedtls/ssl_ticket.h",
+				"libraries/mbedtls/include/mbedtls/threading.h",
+				"libraries/mbedtls/include/mbedtls/timing.h",
+				"libraries/mbedtls/include/mbedtls/version.h",
+				"libraries/mbedtls/include/mbedtls/x509.h",
+				"libraries/mbedtls/include/mbedtls/x509_crl.h",
+				"libraries/mbedtls/include/mbedtls/x509_crt.h",
+				"libraries/mbedtls/include/mbedtls/x509_csr.h"
+			],
+			"type" : "file"
+		},
+		{
+			"backtrace" : 2,
+			"component" : "Unspecified",
+			"destination" : "include/psa",
+			"paths" : 
+			[
+				"libraries/mbedtls/include/psa/crypto.h",
+				"libraries/mbedtls/include/psa/crypto_builtin_composites.h",
+				"libraries/mbedtls/include/psa/crypto_builtin_primitives.h",
+				"libraries/mbedtls/include/psa/crypto_compat.h",
+				"libraries/mbedtls/include/psa/crypto_config.h",
+				"libraries/mbedtls/include/psa/crypto_driver_common.h",
+				"libraries/mbedtls/include/psa/crypto_driver_contexts_composites.h",
+				"libraries/mbedtls/include/psa/crypto_driver_contexts_primitives.h",
+				"libraries/mbedtls/include/psa/crypto_extra.h",
+				"libraries/mbedtls/include/psa/crypto_platform.h",
+				"libraries/mbedtls/include/psa/crypto_se_driver.h",
+				"libraries/mbedtls/include/psa/crypto_sizes.h",
+				"libraries/mbedtls/include/psa/crypto_struct.h",
+				"libraries/mbedtls/include/psa/crypto_types.h",
+				"libraries/mbedtls/include/psa/crypto_values.h"
+			],
+			"type" : "file"
+		}
+	],
+	"paths" : 
+	{
+		"build" : "libraries/mbedtls/include",
+		"source" : "libraries/mbedtls/include"
+	}
+}

@@ -1,0 +1,37 @@
+port/CMakeFiles/IOLIBRARY_FILES.dir/__/libraries/pico-sdk/src/rp2_common/pico_standard_link/binary_info.c.obj: \
+ D:\VBH\dev\RP2040-v6-HAT-C\libraries\pico-sdk\src\rp2_common\pico_standard_link\binary_info.c \
+ D:\VBH\dev\RP2040-v6-HAT-C\libraries\pico-sdk\src\common\pico_binary_info\include/pico/binary_info.h \
+ D:\VBH\dev\RP2040-v6-HAT-C\libraries\pico-sdk\src\common\pico_binary_info\include/pico/binary_info/defs.h \
+ D:\VBH\dev\RP2040-v6-HAT-C\libraries\pico-sdk\src\common\pico_binary_info\include/pico/binary_info/structure.h \
+ c:\progra~1\raspbe~1\picosd~1.1\gcc-ar~1\lib\gcc\arm-none-eabi\10.3.1\include\stdint.h \
+ c:\progra~1\raspbe~1\picosd~1.1\gcc-ar~1\arm-none-eabi\include\stdint.h \
+ c:\progra~1\raspbe~1\picosd~1.1\gcc-ar~1\arm-none-eabi\include\machine\_default_types.h \
+ c:\progra~1\raspbe~1\picosd~1.1\gcc-ar~1\arm-none-eabi\include\sys\features.h \
+ c:\progra~1\raspbe~1\picosd~1.1\gcc-ar~1\arm-none-eabi\include\_newlib_version.h \
+ c:\progra~1\raspbe~1\picosd~1.1\gcc-ar~1\arm-none-eabi\include\sys\_intsup.h \
+ c:\progra~1\raspbe~1\picosd~1.1\gcc-ar~1\arm-none-eabi\include\sys\_stdint.h \
+ D:\VBH\dev\RP2040-v6-HAT-C\libraries\pico-sdk\src\common\pico_binary_info\include/pico/binary_info/code.h \
+ D:\VBH\dev\RP2040-v6-HAT-C\libraries\pico-sdk\src\common\pico_base\include/pico.h \
+ D:\VBH\dev\RP2040-v6-HAT-C\libraries\pico-sdk\src\common\pico_base\include/pico/types.h \
+ D:\VBH\dev\RP2040-v6-HAT-C\libraries\pico-sdk\src\common\pico_base\include/pico/assert.h \
+ c:\progra~1\raspbe~1\picosd~1.1\gcc-ar~1\lib\gcc\arm-none-eabi\10.3.1\include\stdbool.h \
+ c:\progra~1\raspbe~1\picosd~1.1\gcc-ar~1\arm-none-eabi\include\assert.h \
+ c:\progra~1\raspbe~1\picosd~1.1\gcc-ar~1\arm-none-eabi\include\_ansi.h \
+ c:\progra~1\raspbe~1\picosd~1.1\gcc-ar~1\arm-none-eabi\include\newlib.h \
+ c:\progra~1\raspbe~1\picosd~1.1\gcc-ar~1\arm-none-eabi\include\sys\config.h \
+ c:\progra~1\raspbe~1\picosd~1.1\gcc-ar~1\arm-none-eabi\include\machine\ieeefp.h \
+ c:\progra~1\raspbe~1\picosd~1.1\gcc-ar~1\lib\gcc\arm-none-eabi\10.3.1\include\stddef.h \
+ D:\VBH\dev\RP2040-v6-HAT-C\build\generated\pico_base/pico/version.h \
+ D:\VBH\dev\RP2040-v6-HAT-C\libraries\pico-sdk\src\common\pico_base\include/pico/config.h \
+ D:\VBH\dev\RP2040-v6-HAT-C\build\generated\pico_base/pico/config_autogen.h \
+ D:/VBH/dev/RP2040-v6-HAT-C/libraries/pico-sdk/src/boards/include/boards/pico.h \
+ D:/VBH/dev/RP2040-v6-HAT-C/libraries/pico-sdk/src/rp2_common/cmsis/include/cmsis/rename_exceptions.h \
+ D:\VBH\dev\RP2040-v6-HAT-C\libraries\pico-sdk\src\rp2_common\pico_platform\include/pico/platform.h \
+ D:\VBH\dev\RP2040-v6-HAT-C\libraries\pico-sdk\src\rp2040\hardware_regs\include/hardware/platform_defs.h \
+ D:\VBH\dev\RP2040-v6-HAT-C\libraries\pico-sdk\src\rp2040\hardware_regs\include/hardware/regs/addressmap.h \
+ D:\VBH\dev\RP2040-v6-HAT-C\libraries\pico-sdk\src\rp2040\hardware_regs\include/hardware/regs/sio.h \
+ c:\progra~1\raspbe~1\picosd~1.1\gcc-ar~1\arm-none-eabi\include\sys\cdefs.h \
+ D:\VBH\dev\RP2040-v6-HAT-C\libraries\pico-sdk\src\common\pico_base\include/pico/types.h \
+ D:\VBH\dev\RP2040-v6-HAT-C\libraries\pico-sdk\src\common\pico_base\include/pico/error.h \
+ D:\VBH\dev\RP2040-v6-HAT-C\libraries\pico-sdk\src\rp2_common\boot_stage2\include/boot_stage2/config.h \
+ D:\VBH\dev\RP2040-v6-HAT-C\libraries\pico-sdk\src\common\pico_base\include/pico/config.h
