@@ -11,7 +11,7 @@
 #define DATA_BUF_SIZE 2048 //Max size of the data buffer
 #define DEBUG_SOCKET_TCP_SERVER 3 //Socket that functions as a debug socket
 #define AUDIO_SOCKET_TCP_SERVER 2
-#define ADDRESS 0x1009F000
+#define ADDRESS 0x1009F000  //Flash memory address
 #define SIZE    4096
 
 unsigned char buffer[SIZE];
@@ -225,7 +225,7 @@ void change_disconnect_timer_menu()
 }
 
 // Function that handles the interaction within the bautrate menu (type and save new bautrate)
-void change_bautrate_menu()
+void change_baudrate_menu()
 {
     printf("Enter a Bautrate: ");
     unsigned int combinedNumber = 0;
@@ -237,10 +237,10 @@ void change_bautrate_menu()
         else { print_debug_console("\r\n  \x1B[31m [Non-digit character detected]\x1B[0m\r\n"); printf("\n\rNon-digit character detected \n\r"); return;}
     }
 
-    // List of bautrates that need to be recognised
-    unsigned int bautrates[] = {300, 1200, 2400, 4800, 9600, 19200, 38400, 57600, 74880, 115200, 230400, 250000};
-    for(int i = 0; i < sizeof(bautrates)/sizeof(bautrates[0]); i++) {
-        if(combinedNumber == bautrates[i]) { // Check if bautrate exists in bautrates array
+    // List of baudrates that need to be recognised
+    unsigned int baudrates[] = {300, 1200, 2400, 4800, 9600, 19200, 38400, 57600, 74880, 115200, 230400, 250000};
+    for(int i = 0; i < sizeof(baudrates)/sizeof(baudrates[0]); i++) {
+        if(combinedNumber == baudrates[i]) { // Check if bautrate exists in bautrates array
             for(int i = 0; i < 6; i++){
             buffer[i] = tempBuffer[i];
             }
@@ -605,7 +605,7 @@ void applicationMenu(uint8_t *buf, datasize_t len){
     switch(lastChar){
         case '0' + 1:
             print_debug_console("\r\n  \x1B[32m [Type out an existing Bautrate with leading 0's until length of 6]\x1B[0m\r\nBautrate: ");
-            change_bautrate_menu(); //run bautrate settings interaction
+            change_baudrate_menu(); //run bautrate settings interaction
         break;
         case '0' + 2:
             print_debug_console("\r\n  \x1B[32m [Type out socket disconnect timer with leading 0's (min 00, max 99)]\x1B[0m\r\nTime: ");

@@ -189,9 +189,6 @@ int main()
         // printf("SoftwareRX: %s\n", received_data2);
         // sleep_ms(100);
 
-        send(SOCKET1_TCP_SERVER, "12345678910111213", 17);
-        sleep_ms(100); 
-
         UART_receiveData(UART0_ID, socket_to_debug);
         sleep_ms(25); 
 
