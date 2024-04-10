@@ -285,6 +285,7 @@ set(CMAKE_DEPEND_INFO_FILES
   "libraries/CMakeFiles/DHCP4_FILES.dir/DependInfo.cmake"
   "libraries/CMakeFiles/DHCP6_FILES.dir/DependInfo.cmake"
   "libraries/CMakeFiles/DNS_FILES.dir/DependInfo.cmake"
+  "libraries/CMakeFiles/cJSON_FILES.dir/DependInfo.cmake"
   "libraries/mbedtls/CMakeFiles/apidoc.dir/DependInfo.cmake"
   "libraries/mbedtls/library/CMakeFiles/mbedcrypto.dir/DependInfo.cmake"
   "libraries/mbedtls/library/CMakeFiles/mbedx509.dir/DependInfo.cmake"

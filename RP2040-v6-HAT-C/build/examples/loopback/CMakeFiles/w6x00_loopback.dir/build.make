@@ -1149,6 +1149,20 @@ examples/loopback/CMakeFiles/w6x00_loopback.dir/__/__/port/timer/timer.c.s: cmak
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/w6x00_loopback.dir/__/__/port/timer/timer.c.s"
 	cd /d D:\VBH\dev\RP2040-v6-HAT-C\build\examples\loopback && C:\PROGRA~1\RASPBE~1\PICOSD~1.1\GCC-AR~1\bin\AR19DD~1.EXE $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S D:\VBH\dev\RP2040-v6-HAT-C\port\timer\timer.c -o CMakeFiles\w6x00_loopback.dir\__\__\port\timer\timer.c.s
 
+examples/loopback/CMakeFiles/w6x00_loopback.dir/__/__/libraries/cJSON/cJSON.c.obj: examples/loopback/CMakeFiles/w6x00_loopback.dir/flags.make
+examples/loopback/CMakeFiles/w6x00_loopback.dir/__/__/libraries/cJSON/cJSON.c.obj: D:/VBH/dev/RP2040-v6-HAT-C/libraries/cJSON/cJSON.c
+examples/loopback/CMakeFiles/w6x00_loopback.dir/__/__/libraries/cJSON/cJSON.c.obj: examples/loopback/CMakeFiles/w6x00_loopback.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=D:\VBH\dev\RP2040-v6-HAT-C\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_79) "Building C object examples/loopback/CMakeFiles/w6x00_loopback.dir/__/__/libraries/cJSON/cJSON.c.obj"
+	cd /d D:\VBH\dev\RP2040-v6-HAT-C\build\examples\loopback && C:\PROGRA~1\RASPBE~1\PICOSD~1.1\GCC-AR~1\bin\AR19DD~1.EXE $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT examples/loopback/CMakeFiles/w6x00_loopback.dir/__/__/libraries/cJSON/cJSON.c.obj -MF CMakeFiles\w6x00_loopback.dir\__\__\libraries\cJSON\cJSON.c.obj.d -o CMakeFiles\w6x00_loopback.dir\__\__\libraries\cJSON\cJSON.c.obj -c D:\VBH\dev\RP2040-v6-HAT-C\libraries\cJSON\cJSON.c
+
+examples/loopback/CMakeFiles/w6x00_loopback.dir/__/__/libraries/cJSON/cJSON.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/w6x00_loopback.dir/__/__/libraries/cJSON/cJSON.c.i"
+	cd /d D:\VBH\dev\RP2040-v6-HAT-C\build\examples\loopback && C:\PROGRA~1\RASPBE~1\PICOSD~1.1\GCC-AR~1\bin\AR19DD~1.EXE $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E D:\VBH\dev\RP2040-v6-HAT-C\libraries\cJSON\cJSON.c > CMakeFiles\w6x00_loopback.dir\__\__\libraries\cJSON\cJSON.c.i
+
+examples/loopback/CMakeFiles/w6x00_loopback.dir/__/__/libraries/cJSON/cJSON.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/w6x00_loopback.dir/__/__/libraries/cJSON/cJSON.c.s"
+	cd /d D:\VBH\dev\RP2040-v6-HAT-C\build\examples\loopback && C:\PROGRA~1\RASPBE~1\PICOSD~1.1\GCC-AR~1\bin\AR19DD~1.EXE $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S D:\VBH\dev\RP2040-v6-HAT-C\libraries\cJSON\cJSON.c -o CMakeFiles\w6x00_loopback.dir\__\__\libraries\cJSON\cJSON.c.s
+
 # Object files for target w6x00_loopback
 w6x00_loopback_OBJECTS = \
 "CMakeFiles/w6x00_loopback.dir/w6x00_loopback.c.obj" \
@@ -1228,7 +1242,8 @@ w6x00_loopback_OBJECTS = \
 "CMakeFiles/w6x00_loopback.dir/__/__/port/io6Library/src/w6x00_spi.c.obj" \
 "CMakeFiles/w6x00_loopback.dir/__/__/port/io6Library/src/w6x00_gpio_irq.c.obj" \
 "CMakeFiles/w6x00_loopback.dir/__/__/libraries/io6Library/Application/loopback/loopback.c.obj" \
-"CMakeFiles/w6x00_loopback.dir/__/__/port/timer/timer.c.obj"
+"CMakeFiles/w6x00_loopback.dir/__/__/port/timer/timer.c.obj" \
+"CMakeFiles/w6x00_loopback.dir/__/__/libraries/cJSON/cJSON.c.obj"
 
 # External object files for target w6x00_loopback
 w6x00_loopback_EXTERNAL_OBJECTS =
@@ -1311,18 +1326,20 @@ examples/loopback/w6x00_loopback.elf: examples/loopback/CMakeFiles/w6x00_loopbac
 examples/loopback/w6x00_loopback.elf: examples/loopback/CMakeFiles/w6x00_loopback.dir/__/__/port/io6Library/src/w6x00_gpio_irq.c.obj
 examples/loopback/w6x00_loopback.elf: examples/loopback/CMakeFiles/w6x00_loopback.dir/__/__/libraries/io6Library/Application/loopback/loopback.c.obj
 examples/loopback/w6x00_loopback.elf: examples/loopback/CMakeFiles/w6x00_loopback.dir/__/__/port/timer/timer.c.obj
+examples/loopback/w6x00_loopback.elf: examples/loopback/CMakeFiles/w6x00_loopback.dir/__/__/libraries/cJSON/cJSON.c.obj
 examples/loopback/w6x00_loopback.elf: examples/loopback/CMakeFiles/w6x00_loopback.dir/build.make
 examples/loopback/w6x00_loopback.elf: libraries/libETHERNET_FILES.a
 examples/loopback/w6x00_loopback.elf: port/libIOLIBRARY_FILES.a
 examples/loopback/w6x00_loopback.elf: libraries/libLOOPBACK_FILES.a
 examples/loopback/w6x00_loopback.elf: port/libTIMER_FILES.a
+examples/loopback/w6x00_loopback.elf: libraries/libcJSON_FILES.a
 examples/loopback/w6x00_loopback.elf: libraries/libW6100_FILES.a
 examples/loopback/w6x00_loopback.elf: libraries/libETHERNET_FILES.a
 examples/loopback/w6x00_loopback.elf: libraries/libW6100_FILES.a
 examples/loopback/w6x00_loopback.elf: pico-sdk/src/rp2_common/boot_stage2/bs2_default_padded_checksummed.S
 examples/loopback/w6x00_loopback.elf: examples/loopback/CMakeFiles/w6x00_loopback.dir/objects1.rsp
 examples/loopback/w6x00_loopback.elf: examples/loopback/CMakeFiles/w6x00_loopback.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=D:\VBH\dev\RP2040-v6-HAT-C\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_79) "Linking CXX executable w6x00_loopback.elf"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=D:\VBH\dev\RP2040-v6-HAT-C\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_80) "Linking CXX executable w6x00_loopback.elf"
 	cd /d D:\VBH\dev\RP2040-v6-HAT-C\build\examples\loopback && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles\w6x00_loopback.dir\link.txt --verbose=$(VERBOSE)
 	cd /d D:\VBH\dev\RP2040-v6-HAT-C\build\examples\loopback && "C:\Program Files\Raspberry Pi\Pico SDK v1.5.1\gcc-arm-none-eabi\bin\arm-none-eabi-objcopy.exe" -Oihex D:/VBH/dev/RP2040-v6-HAT-C/build/examples/loopback/w6x00_loopback.elf w6x00_loopback.hex
 	cd /d D:\VBH\dev\RP2040-v6-HAT-C\build\examples\loopback && "C:\Program Files\Raspberry Pi\Pico SDK v1.5.1\gcc-arm-none-eabi\bin\arm-none-eabi-objcopy.exe" -Obinary D:/VBH/dev/RP2040-v6-HAT-C/build/examples/loopback/w6x00_loopback.elf w6x00_loopback.bin

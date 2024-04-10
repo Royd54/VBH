@@ -244,6 +244,44 @@ DNS_FILES/fast:
 	cd /d D:\VBH\dev\RP2040-v6-HAT-C\build && $(MAKE) $(MAKESILENT) -f libraries\CMakeFiles\DNS_FILES.dir\build.make libraries/CMakeFiles/DNS_FILES.dir/build
 .PHONY : DNS_FILES/fast
 
+# Convenience name for target.
+libraries/CMakeFiles/cJSON_FILES.dir/rule:
+	cd /d D:\VBH\dev\RP2040-v6-HAT-C\build && $(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 libraries/CMakeFiles/cJSON_FILES.dir/rule
+.PHONY : libraries/CMakeFiles/cJSON_FILES.dir/rule
+
+# Convenience name for target.
+cJSON_FILES: libraries/CMakeFiles/cJSON_FILES.dir/rule
+.PHONY : cJSON_FILES
+
+# fast build rule for target.
+cJSON_FILES/fast:
+	cd /d D:\VBH\dev\RP2040-v6-HAT-C\build && $(MAKE) $(MAKESILENT) -f libraries\CMakeFiles\cJSON_FILES.dir\build.make libraries/CMakeFiles/cJSON_FILES.dir/build
+.PHONY : cJSON_FILES/fast
+
+cJSON/cJSON.obj: cJSON/cJSON.c.obj
+.PHONY : cJSON/cJSON.obj
+
+# target to build an object file
+cJSON/cJSON.c.obj:
+	cd /d D:\VBH\dev\RP2040-v6-HAT-C\build && $(MAKE) $(MAKESILENT) -f libraries\CMakeFiles\cJSON_FILES.dir\build.make libraries/CMakeFiles/cJSON_FILES.dir/cJSON/cJSON.c.obj
+.PHONY : cJSON/cJSON.c.obj
+
+cJSON/cJSON.i: cJSON/cJSON.c.i
+.PHONY : cJSON/cJSON.i
+
+# target to preprocess a source file
+cJSON/cJSON.c.i:
+	cd /d D:\VBH\dev\RP2040-v6-HAT-C\build && $(MAKE) $(MAKESILENT) -f libraries\CMakeFiles\cJSON_FILES.dir\build.make libraries/CMakeFiles/cJSON_FILES.dir/cJSON/cJSON.c.i
+.PHONY : cJSON/cJSON.c.i
+
+cJSON/cJSON.s: cJSON/cJSON.c.s
+.PHONY : cJSON/cJSON.s
+
+# target to generate assembly for a file
+cJSON/cJSON.c.s:
+	cd /d D:\VBH\dev\RP2040-v6-HAT-C\build && $(MAKE) $(MAKESILENT) -f libraries\CMakeFiles\cJSON_FILES.dir\build.make libraries/CMakeFiles/cJSON_FILES.dir/cJSON/cJSON.c.s
+.PHONY : cJSON/cJSON.c.s
+
 io6Library/Application/loopback/loopback.obj: io6Library/Application/loopback/loopback.c.obj
 .PHONY : io6Library/Application/loopback/loopback.obj
 
@@ -439,6 +477,10 @@ help:
 	@echo ... ETHERNET_FILES
 	@echo ... LOOPBACK_FILES
 	@echo ... W6100_FILES
+	@echo ... cJSON_FILES
+	@echo ... cJSON/cJSON.obj
+	@echo ... cJSON/cJSON.i
+	@echo ... cJSON/cJSON.s
 	@echo ... io6Library/Application/loopback/loopback.obj
 	@echo ... io6Library/Application/loopback/loopback.i
 	@echo ... io6Library/Application/loopback/loopback.s

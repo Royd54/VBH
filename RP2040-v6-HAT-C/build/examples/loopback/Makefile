@@ -188,6 +188,30 @@ ELF2UF2Build/fast:
 	cd /d D:\VBH\dev\RP2040-v6-HAT-C\build && $(MAKE) $(MAKESILENT) -f examples\loopback\CMakeFiles\ELF2UF2Build.dir\build.make examples/loopback/CMakeFiles/ELF2UF2Build.dir/build
 .PHONY : ELF2UF2Build/fast
 
+__/__/libraries/cJSON/cJSON.obj: __/__/libraries/cJSON/cJSON.c.obj
+.PHONY : __/__/libraries/cJSON/cJSON.obj
+
+# target to build an object file
+__/__/libraries/cJSON/cJSON.c.obj:
+	cd /d D:\VBH\dev\RP2040-v6-HAT-C\build && $(MAKE) $(MAKESILENT) -f examples\loopback\CMakeFiles\w6x00_loopback.dir\build.make examples/loopback/CMakeFiles/w6x00_loopback.dir/__/__/libraries/cJSON/cJSON.c.obj
+.PHONY : __/__/libraries/cJSON/cJSON.c.obj
+
+__/__/libraries/cJSON/cJSON.i: __/__/libraries/cJSON/cJSON.c.i
+.PHONY : __/__/libraries/cJSON/cJSON.i
+
+# target to preprocess a source file
+__/__/libraries/cJSON/cJSON.c.i:
+	cd /d D:\VBH\dev\RP2040-v6-HAT-C\build && $(MAKE) $(MAKESILENT) -f examples\loopback\CMakeFiles\w6x00_loopback.dir\build.make examples/loopback/CMakeFiles/w6x00_loopback.dir/__/__/libraries/cJSON/cJSON.c.i
+.PHONY : __/__/libraries/cJSON/cJSON.c.i
+
+__/__/libraries/cJSON/cJSON.s: __/__/libraries/cJSON/cJSON.c.s
+.PHONY : __/__/libraries/cJSON/cJSON.s
+
+# target to generate assembly for a file
+__/__/libraries/cJSON/cJSON.c.s:
+	cd /d D:\VBH\dev\RP2040-v6-HAT-C\build && $(MAKE) $(MAKESILENT) -f examples\loopback\CMakeFiles\w6x00_loopback.dir\build.make examples/loopback/CMakeFiles/w6x00_loopback.dir/__/__/libraries/cJSON/cJSON.c.s
+.PHONY : __/__/libraries/cJSON/cJSON.c.s
+
 __/__/libraries/io6Library/Application/loopback/loopback.obj: __/__/libraries/io6Library/Application/loopback/loopback.c.obj
 .PHONY : __/__/libraries/io6Library/Application/loopback/loopback.obj
 
@@ -1898,6 +1922,9 @@ help:
 	@echo ... rebuild_cache
 	@echo ... ELF2UF2Build
 	@echo ... w6x00_loopback
+	@echo ... __/__/libraries/cJSON/cJSON.obj
+	@echo ... __/__/libraries/cJSON/cJSON.i
+	@echo ... __/__/libraries/cJSON/cJSON.s
 	@echo ... __/__/libraries/io6Library/Application/loopback/loopback.obj
 	@echo ... __/__/libraries/io6Library/Application/loopback/loopback.i
 	@echo ... __/__/libraries/io6Library/Application/loopback/loopback.s

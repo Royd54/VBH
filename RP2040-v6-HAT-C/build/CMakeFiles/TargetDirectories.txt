@@ -475,6 +475,7 @@ D:/VBH/dev/RP2040-v6-HAT-C/build/libraries/CMakeFiles/LOOPBACK_FILES.dir
 D:/VBH/dev/RP2040-v6-HAT-C/build/libraries/CMakeFiles/DHCP4_FILES.dir
 D:/VBH/dev/RP2040-v6-HAT-C/build/libraries/CMakeFiles/DHCP6_FILES.dir
 D:/VBH/dev/RP2040-v6-HAT-C/build/libraries/CMakeFiles/DNS_FILES.dir
+D:/VBH/dev/RP2040-v6-HAT-C/build/libraries/CMakeFiles/cJSON_FILES.dir
 D:/VBH/dev/RP2040-v6-HAT-C/build/libraries/CMakeFiles/edit_cache.dir
 D:/VBH/dev/RP2040-v6-HAT-C/build/libraries/CMakeFiles/rebuild_cache.dir
 D:/VBH/dev/RP2040-v6-HAT-C/build/libraries/CMakeFiles/list_install_components.dir

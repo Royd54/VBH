@@ -10,7 +10,7 @@
 unsigned int BAUD_RATE_SET = 38400;
 
 //Timing calculated by 1/BAUD_RATE*1000000 for waiting the correct amount of time(in microseconds) according to the baudrate 
-#define BAUD_RATE_TIMING 26//(1e6/57600) //26 voor 38400
+#define BAUD_RATE_TIMING 26//(1e6/57600) //26 for 38400
 
 //uart0 ID
 #define UART0_ID uart0

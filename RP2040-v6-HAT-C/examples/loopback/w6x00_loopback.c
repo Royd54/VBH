@@ -17,6 +17,8 @@
 #include <hardware/sync.h>
 #include <time.h>
 
+#include "tcp_api.c"
+
 // #include "UART_Communication.c"
 
 /* Clock */
@@ -29,12 +31,14 @@
 #define SOCKET1_TCP_SERVER 0
 #define SOCKET2_TCP_SERVER 1
 #define SOCKET3_TCP_SERVER 2
+#define API_SOCKET_TCP_SERVER 5
 
 /* Ports */
 #define PORT1_TCP_SERVER 5001
 #define PORT2_TCP_SERVER 5002
 #define PORT3_TCP_SERVER 5000
 #define DEBUG_PORT_TCP_SERVER 23
+#define API_PORT_TCP_SERVER 8080
 
 #define RETRY_CNT   10000
 
@@ -58,15 +62,14 @@ int duration = 40000; //Time that needs tot be reached in order to disconnect a 
 
 /* Clock */
 static void set_clock_khz(void);
-
 /* Timer */
 static void repeating_timer_callback(void);
-
 /* Keep alive check */
 void socket_behaviour(char socket, uint16_t port, uint16_t *timer);
-
 /* Flash memory interaction */
 char readCharFromFlash(unsigned int flashAdress, char shift);
+
+void test(void);
 
 char received_data2[256];  // Adjust the buffer size as needed
 
@@ -167,7 +170,6 @@ int main()
 
     /* Get network information */
     print_network_information(g_net_info);
-
     /* Infinite loop */
     while (1)
     {
@@ -189,8 +191,8 @@ int main()
         // printf("SoftwareRX: %s\n", received_data2);
         // sleep_ms(100);
 
-        UART_receiveData(UART0_ID, socket_to_debug);
-        sleep_ms(25); 
+        // UART_receiveData(UART0_ID, socket_to_debug);
+        // sleep_ms(25); 
 
         //UART_receiveData(UART1_ID);
         // //sleep_ms(50); 
@@ -199,17 +201,8 @@ int main()
         socket_behaviour(SOCKET2_TCP_SERVER, PORT2_TCP_SERVER, &messageReceivedTimer2);
         socket_behaviour(SOCKET3_TCP_SERVER, PORT3_TCP_SERVER, &messageReceivedTimer3);
         init_server_socket(DEBUG_SOCKET_TCP_SERVER, g_tcp_server_buf, DEBUG_PORT_TCP_SERVER);
-
-// #ifdef TCP_SERVER
-//             /* TCP server loopback test */
-//             if ((retval = loopback_tcps(SOCKET_TCP_SERVER, g_tcp_server_buf, PORT_TCP_SERVER, AS_IPV4)) < 0)
-//             {
-//                 printf(" loopback_tcps error : %d\n", retval);
-
-//                 while (1)
-//                     ;
-//             }
-// #endif
+        init_api_socket(API_SOCKET_TCP_SERVER, g_tcp_server_buf, API_PORT_TCP_SERVER);
+        //test();
     }
 }
 
@@ -265,4 +258,21 @@ void socket_behaviour(char socket, uint16_t port, uint16_t *timer)
     }else{
         *timer = 0; //reset timer
     }
+}
+
+void test(){
+    // Create a JSON object and populate it
+    cJSON *root = cJSON_CreateObject();
+    cJSON_AddNumberToObject(root, "button", 1);
+    cJSON_AddStringToObject(root, "function", "Fade");
+
+    // Convert JSON object to string
+    char *json_str = cJSON_Print(root);
+
+    send(API_SOCKET_TCP_SERVER, json_str, strlen(json_str));
+    sleep_ms(1000);
+
+    // Free resources
+    cJSON_Delete(root);
+    free(json_str);
 }

@@ -128,10 +128,12 @@ set(CMAKE_ASM_TARGET_INCLUDE_PATH
   "D:/VBH/dev/RP2040-v6-HAT-C/port"
   "D:/VBH/dev/RP2040-v6-HAT-C/libraries/io6Library/Application/loopback"
   "D:/VBH/dev/RP2040-v6-HAT-C/port/timer"
+  "D:/VBH/dev/RP2040-v6-HAT-C/libraries/cJSON"
   )
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
+  "D:/VBH/dev/RP2040-v6-HAT-C/libraries/cJSON/cJSON.c" "examples/loopback/CMakeFiles/w6x00_loopback.dir/__/__/libraries/cJSON/cJSON.c.obj" "gcc" "examples/loopback/CMakeFiles/w6x00_loopback.dir/__/__/libraries/cJSON/cJSON.c.obj.d"
   "D:/VBH/dev/RP2040-v6-HAT-C/libraries/io6Library/Application/loopback/loopback.c" "examples/loopback/CMakeFiles/w6x00_loopback.dir/__/__/libraries/io6Library/Application/loopback/loopback.c.obj" "gcc" "examples/loopback/CMakeFiles/w6x00_loopback.dir/__/__/libraries/io6Library/Application/loopback/loopback.c.obj.d"
   "D:/VBH/dev/RP2040-v6-HAT-C/libraries/io6Library/Ethernet/W6100/w6100.c" "examples/loopback/CMakeFiles/w6x00_loopback.dir/__/__/libraries/io6Library/Ethernet/W6100/w6100.c.obj" "gcc" "examples/loopback/CMakeFiles/w6x00_loopback.dir/__/__/libraries/io6Library/Ethernet/W6100/w6100.c.obj.d"
   "D:/VBH/dev/RP2040-v6-HAT-C/libraries/io6Library/Ethernet/socket.c" "examples/loopback/CMakeFiles/w6x00_loopback.dir/__/__/libraries/io6Library/Ethernet/socket.c.obj" "gcc" "examples/loopback/CMakeFiles/w6x00_loopback.dir/__/__/libraries/io6Library/Ethernet/socket.c.obj.d"

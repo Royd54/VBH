@@ -112,4 +112,6 @@ examples/loopback/CMakeFiles/w6x00_loopback.dir/w6x00_loopback.c.obj: \
  D:\VBH\dev\RP2040-v6-HAT-C\examples\loopback\UART_Communication.h \
  c:\progra~1\raspbe~1\picosd~1.1\gcc-ar~1\lib\gcc\arm-none-eabi\10.3.1\include\stdint-gcc.h \
  c:\progra~1\raspbe~1\picosd~1.1\gcc-ar~1\arm-none-eabi\include\time.h \
- c:\progra~1\raspbe~1\picosd~1.1\gcc-ar~1\arm-none-eabi\include\machine\time.h
+ c:\progra~1\raspbe~1\picosd~1.1\gcc-ar~1\arm-none-eabi\include\machine\time.h \
+ D:\VBH\dev\RP2040-v6-HAT-C\examples\loopback\tcp_api.c \
+ d:\vbh\dev\rp2040-v6-hat-c\libraries\cjson\cjson.h

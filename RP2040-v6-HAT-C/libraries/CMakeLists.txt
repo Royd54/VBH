@@ -90,3 +90,13 @@ target_include_directories(DNS_FILES PUBLIC
 target_link_libraries(ETHERNET_FILES PUBLIC
         W6100_FILES
         )
+
+add_library(cJSON_FILES STATIC)
+
+target_sources(cJSON_FILES PUBLIC
+        ${CMAKE_SOURCE_DIR}/libraries/cJSON/cJSON.c
+        )
+
+target_include_directories(cJSON_FILES PUBLIC
+        ${CMAKE_SOURCE_DIR}/libraries/cJSON
+        )

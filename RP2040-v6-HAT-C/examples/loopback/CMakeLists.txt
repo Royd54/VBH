@@ -12,6 +12,7 @@ target_link_libraries(${TARGET_NAME} PRIVATE
         IOLIBRARY_FILES
         LOOPBACK_FILES
         TIMER_FILES
+        cJSON_FILES
         )
 
 pico_enable_stdio_usb(${TARGET_NAME} 1)

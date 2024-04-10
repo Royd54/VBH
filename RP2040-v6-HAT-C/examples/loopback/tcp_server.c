@@ -107,7 +107,7 @@ int32_t init_server_socket(uint8_t sn, uint8_t *buf, uint16_t port)
             if (received_size > DATA_BUF_SIZE)
                 received_size = DATA_BUF_SIZE;
             ret = recv(sn, buf, received_size);
-
+            
             if (ret <= 0)
                 return ret; // check SOCKERR_BUSY & SOCKERR_XXX. For showing the occurrence of SOCKERR_BUSY.
             received_size = (uint16_t)ret;

@@ -356,6 +356,19 @@ DNS_FILES/fast:
 .PHONY : DNS_FILES/fast
 
 #=============================================================================
+# Target rules for targets named cJSON_FILES
+
+# Build rule for target.
+cJSON_FILES: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 cJSON_FILES
+.PHONY : cJSON_FILES
+
+# fast build rule for target.
+cJSON_FILES/fast:
+	$(MAKE) $(MAKESILENT) -f libraries\CMakeFiles\cJSON_FILES.dir\build.make libraries/CMakeFiles/cJSON_FILES.dir/build
+.PHONY : cJSON_FILES/fast
+
+#=============================================================================
 # Target rules for targets named apidoc
 
 # Build rule for target.
@@ -475,6 +488,7 @@ help:
 	@echo ... TIMER_FILES
 	@echo ... W6100_FILES
 	@echo ... bs2_default
+	@echo ... cJSON_FILES
 	@echo ... mbedcrypto
 	@echo ... mbedtls
 	@echo ... mbedx509

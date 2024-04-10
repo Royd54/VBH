@@ -1,4 +1,6 @@
 file(REMOVE_RECURSE
+  "CMakeFiles/w6x00_loopback.dir/__/__/libraries/cJSON/cJSON.c.obj"
+  "CMakeFiles/w6x00_loopback.dir/__/__/libraries/cJSON/cJSON.c.obj.d"
   "CMakeFiles/w6x00_loopback.dir/__/__/libraries/io6Library/Application/loopback/loopback.c.obj"
   "CMakeFiles/w6x00_loopback.dir/__/__/libraries/io6Library/Application/loopback/loopback.c.obj.d"
   "CMakeFiles/w6x00_loopback.dir/__/__/libraries/io6Library/Ethernet/W6100/w6100.c.obj"
