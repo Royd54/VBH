@@ -11,14 +11,13 @@
 #include "socket.h"
 #include "stdlib.h"
 #include "timer.h"
-#include "tcp_server.c"
 
 #include <hardware/flash.h>
 #include <hardware/sync.h>
 #include <time.h>
 
 #include "tcp_api.c"
-
+// #include "tcp_server.c"
 // #include "UART_Communication.c"
 
 /* Clock */
@@ -58,7 +57,6 @@ static uint8_t g_tcp_client_buf[ETHERNET_BUF_MAX_SIZE] = {
 static uint16_t messageReceivedTimer1 = 0;
 static uint16_t messageReceivedTimer2 = 0;
 static uint16_t messageReceivedTimer3 = 0;
-int duration = 40000; //Time that needs tot be reached in order to disconnect a client
 
 /* Clock */
 static void set_clock_khz(void);
@@ -143,7 +141,7 @@ int main()
     // Combine timer characters into an interger from flash memory
     combinedInt = 0;
     combinedInt = (m - '0') * 10 + (n - '0');
-    duration = combinedInt * 1000;
+    socketInactiveTimer = combinedInt;
 
     sleep_ms(1000 * 3);
 
@@ -165,7 +163,7 @@ int main()
     printf("Start address flash memory: %08x\n", ADDRESS);
     printf("User set ip: %d.%d.%d.%d\r\n", (int)g_net_info.ip[0],(int)g_net_info.ip[1],(int)g_net_info.ip[2],(int)g_net_info.ip[3]);
     printf("User set bautrate: %c%c%c%c%c%c\r\n", g, h, i, j, k, l);
-    printf("User set disconnect timer: %d\r\n", duration);
+    printf("User set disconnect timer: %d\r\n", socketInactiveTimer);
     printf("User set bautrate converted: %d\r\n", BAUD_RATE_SET);
 
     /* Get network information */
@@ -244,7 +242,7 @@ void socket_behaviour(char socket, uint16_t port, uint16_t *timer)
     uint8_t *buf;
     if(init_server_socket(socket, g_tcp_server_buf, port) == 5) //Check if a client connected to the socket
     {
-        if(*timer>duration) //Check if the client needs to be disconnected when the client stops sending messages
+        if(*timer>(socketInactiveTimer*1000)) //Check if the client needs to be disconnected when the client stops sending messages
         {
             if(recv(socket, buf, 2048) == 0) //Check if a message is received
             {

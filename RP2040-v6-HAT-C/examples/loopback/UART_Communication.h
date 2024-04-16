@@ -7,9 +7,11 @@
 //Baudrate that is used for transmitting and recieving data
 #define BAUD_RATE 38400
 
+// Used for instantiating hardware uart (saving baudrate settings)
 unsigned int BAUD_RATE_SET = 38400;
 
 //Timing calculated by 1/BAUD_RATE*1000000 for waiting the correct amount of time(in microseconds) according to the baudrate 
+//Used for software uart
 #define BAUD_RATE_TIMING 26//(1e6/57600) //26 for 38400
 
 //uart0 ID
@@ -41,5 +43,6 @@ extern void software_UART_send_bit(uint8_t gpio_pin, uint8_t bit);
 extern void software_UART_send_byte(uint8_t gpio_pin, uint8_t byte);
 extern void software_UART_send_string(uint8_t gpio_pin, const char *str);
 extern void addNewline(char *received_data,  int data_index);
+extern void uart_transmit_command(uint8_t data);
 
 #endif  // MY_UART_HEADER_H

@@ -16,6 +16,9 @@
 
 unsigned char buffer[SIZE];
 unsigned char tempBuffer[SIZE];
+unsigned int ipTemplate[] = {169, 254, 93, 240};
+
+int socketInactiveTimer = 40; //Time that needs tot be reached in order to disconnect a client
 
 unsigned int combineChars(char char1, char char2, char char3);
 char* combineIntegersToString(int num1, int num2, int num3, int num4);
@@ -301,10 +304,11 @@ void change_ip_menu()
     buffer[3] = combineChars(tempBuffer[12], tempBuffer[13], tempBuffer[14]);
 
     //check if the ip that has been put in alligns with the template
-    unsigned int ipTemplate[] = {169, 254, 93, 240}; //values that the user given ip needs to allign with
+    //unsigned int tempIpTemplate[] = {169, 254, 93, 240}; //values that the user given ip needs to allign with
+    unsigned int tempIpTemplate[] = {ipTemplate[0], ipTemplate[1], ipTemplate[2], ipTemplate[3]}; //values that the user given ip needs to allign with
     for(int i = 0; i < 2; i++) { // Check if first 3 numbers are equal to the template
         //Check if template is met or if the combined char is in the range
-        if((buffer[i] != ipTemplate[i]) || (combineChars(tempBuffer[8], tempBuffer[9], tempBuffer[10]) > 255) || (combineChars(tempBuffer[12], tempBuffer[13], tempBuffer[14]) > 255)) { 
+        if((buffer[i] != tempIpTemplate[i]) || (combineChars(tempBuffer[8], tempBuffer[9], tempBuffer[10]) > 255) || (combineChars(tempBuffer[12], tempBuffer[13], tempBuffer[14]) > 255)) { 
             print_debug_console("\r\n  \x1B[31m [Ip not in range]\x1B[0m\r\n"); 
             printf("\n\rIp not in range \n\r"); 
             return;
