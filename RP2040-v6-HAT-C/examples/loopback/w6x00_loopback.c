@@ -189,11 +189,11 @@ int main()
         // printf("SoftwareRX: %s\n", received_data2);
         // sleep_ms(100);
 
-        // UART_receiveData(UART0_ID, socket_to_debug);
-        // sleep_ms(25); 
+        UART_receiveData(UART0_ID, socket_to_debug);
+        sleep_ms(50); 
 
-        //UART_receiveData(UART1_ID);
-        // //sleep_ms(50); 
+        // UART_receiveData(UART1_ID);
+        // sleep_ms(50); 
 
         socket_behaviour(SOCKET1_TCP_SERVER, PORT1_TCP_SERVER, &messageReceivedTimer1);
         socket_behaviour(SOCKET2_TCP_SERVER, PORT2_TCP_SERVER, &messageReceivedTimer2);

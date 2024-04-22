@@ -16,9 +16,9 @@ void init_uart(uart_inst_t *uart, int tx_pin, int rx_pin) {
 
 //Function for sending data trough hardware based uart
 void hardware_UART_send_data(uart_inst_t *uart, const char* data) {
-    //printf("Sending command: %s\n", data);
+    // printf("Sending command: %s\n", data);
     uart_puts(uart, data);
-    //printf("Command sent.\n");
+    // printf("Command sent.\n");
 }
 
 //Function for creating a us delay using busy_wait_us()

@@ -210,13 +210,51 @@ void button_fade_command(cJSON *object) {
     cJSON *message = cJSON_GetObjectItem(object, "button");
     cJSON *fadeItem = cJSON_GetObjectItem(object, "fade");
     cJSON *speedItem = cJSON_GetObjectItem(object, "speed");
-    
+
+    char command[22]; // Command buffer with space for null terminator
+    char buttonHex[5];
+    sprintf(buttonHex, "%02X", message->valueint);
+    char command1[] = ">$080111420D\x0D\x0A"; // First command
+    char command2[] = ">$0801110000\x0D\x0A"; // Second command
+
+    // Extract initial values from the commands
+    int value1, value2;
+    sscanf(command1, ">$080111%04X\x0D\x0A", &value1);
+    sscanf(command2, ">$080111%04X\x0D\x0A", &value2);
+    int steps = 10; // Number of steps for fading between the commands
+
     if(fadeItem->valueint > 0){
         //fade-in with speedItem as speed value
         printf("API fade-in button: %d and speed: %d\n\n", message->valueint, speedItem->valueint);
+        // Gradually fade from command1 to command2
+        for (int i = 0; i <= steps; i++) {
+            // Interpolate values between command1 and command2
+            int value_interpolated = value1 + (value2 - value1) * i / steps;
+            snprintf(command, sizeof(command), ">$080111%04X\x0D\x0A", value_interpolated);
+            for(int i = 0; i < 18; i++){
+            sprintf(buttonHex, "%02X", i);
+            command[6] = buttonHex[0];
+            command[7] = buttonHex[1];
+            hardware_UART_send_data(UART0_ID, command);
+            }
+            sleep_ms(speedItem->valueint); // Adjust delay time as needed
+        }
     }else{
         //fade-out with speedItem as speed value
         printf("API fade-out button: %d and speed: %d\n\n", message->valueint, speedItem->valueint);
+        // Gradually fade from command2 back to command1
+        for (int i = steps; i >= 0; i--) {
+            // Interpolate values between command2 and command1
+            int value_interpolated = value1 + (value2 - value1) * i / steps;
+            snprintf(command, sizeof(command), ">$080111%04X\x0D\x0A", value_interpolated);
+            for(int i = 0; i < 18; i++){
+            sprintf(buttonHex, "%02X", i);
+            command[6] = buttonHex[0];
+            command[7] = buttonHex[1];
+            hardware_UART_send_data(UART0_ID, command);
+            }
+            sleep_ms(speedItem->valueint); // Adjust delay time as needed
+        }
     }
 }
 
@@ -286,8 +324,24 @@ void fade_gui(cJSON *object){
 // {"cmd":"press button", "button": 10}
 // Simulate a specific button being pressed
 void press_button(cJSON *object){
+    char pressStr[] =   "<$061311FF\x0D\x0A";
+    char releaseStr[] = "<$06131100\x0D\x0A";
+    char buttonHex[5];
+
     cJSON *message = cJSON_GetObjectItem(object, "button");
     printf("API pressed button: %d\n\n", message->valueint);
+
+    sprintf(buttonHex, "%02X", message->valueint);
+    pressStr[6] = buttonHex[0];
+    pressStr[7] = buttonHex[1];
+    releaseStr[6] = buttonHex[0];
+    releaseStr[7] = buttonHex[1];
+
+    send(0, pressStr, 12);
+    delay_us(300);
+    send(0, releaseStr, 12);
+    //>$0801110000\x0D\x0A
+    //>$080111420D\x0D\x0A
 }
 
 // {"cmd":"fade button group", "buttons": [1,2,10,17], "fade": 1, "speed": 50}
@@ -417,10 +471,15 @@ void update_system_ip(cJSON *object){
     cJSON *ipItem = cJSON_GetObjectItem(object, "ip");
     int a, b, c, d;
     sscanf(ipItem->valuestring, "%d.%d.%d.%d", &a, &b, &c, &d);
+
     g_net_info.ip[0] = a;
     g_net_info.ip[1] = b;
     g_net_info.ip[2] = c;
     g_net_info.ip[3] = d;
+    ipTemplate[0] = a;
+    ipTemplate[1] = b;
+    ipTemplate[2] = c;
+    ipTemplate[3] = d;
     close(0);
     close(1);
     close(2);
