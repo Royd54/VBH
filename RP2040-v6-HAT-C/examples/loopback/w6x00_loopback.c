@@ -20,6 +20,9 @@
 // #include "tcp_server.c"
 // #include "UART_Communication.c"
 
+#include "hardware/uart.h"
+#include "hardware/irq.h"
+
 /* Clock */
 #define PLL_SYS_KHZ (133 * 1000)
 
@@ -151,7 +154,7 @@ int main()
 
     wizchip_spi_initialize();
     wizchip_cris_initialize();
-
+    
     wizchip_reset();
     wizchip_initialize();
     wizchip_check();
@@ -168,6 +171,24 @@ int main()
 
     /* Get network information */
     print_network_information(g_net_info);
+
+    // Set up a RX interrupt
+    // We need to set up the handler first
+    // Select correct interrupt for the UART we are using
+    int UART_IRQ_0 = UART0_IRQ;
+    int UART_IRQ_1 = UART1_IRQ;
+
+    // And set up and enable the interrupt handlers
+    irq_set_exclusive_handler(UART_IRQ_0, uart_rx_interrupt);
+    irq_set_enabled(UART_IRQ_0, true);
+
+    irq_set_exclusive_handler(UART_IRQ_1, uart_rx_interrupt);
+    irq_set_enabled(UART_IRQ_1, true);
+    
+    // Now enable the UART to send interrupts - RX only
+    uart_set_irq_enables(UART0_ID, true, false);
+    uart_set_irq_enables(UART1_ID, true, false);
+
     /* Infinite loop */
     while (1)
     {
@@ -189,10 +210,10 @@ int main()
         // printf("SoftwareRX: %s\n", received_data2);
         // sleep_ms(100);
 
-        UART_receiveData(UART0_ID, socket_to_debug);
-        sleep_ms(50); 
+        // UART_receiveData(UART0_ID, socket_to_debug);
+        // sleep_ms(50); 
 
-        // UART_receiveData(UART1_ID);
+        // UART_receiveData(UART1_ID, socket_to_debug);
         // sleep_ms(50); 
 
         socket_behaviour(SOCKET1_TCP_SERVER, PORT1_TCP_SERVER, &messageReceivedTimer1);

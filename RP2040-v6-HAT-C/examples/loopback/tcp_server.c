@@ -36,7 +36,7 @@ void copyToSerial(uint8_t *buf, datasize_t len, uint8_t owning_socket);
 void transmitHexCommand(uint8_t *buf);
 
 int menuIndex = 0;
-char socket_to_debug = 4; //Set tot 4 for defaulting to no socket to debug
+char socket_to_debug = 4; //Set to 4 for defaulting to no socket to debug
 char lastChar = 0;  
 
 #if LOOPBACK_MODE == LOOPBACK_MAIN_NOBLCOK
@@ -350,9 +350,6 @@ unsigned int combineChars(char char1, char char2, char char3) {
 void transmitHexCommand(uint8_t *buf){
     uint8_t txbuf[27]; //27 is the max command length of the audio board protocol
     int stop_index = -1;
-    // for (int i = 0; i < 27; i++) {
-    //     printf("%x", buf[i]); // Print in hexadecimal format
-    // }
     // // Loop trough max size of the command buffer (size indicates number of hex values)
     // for (int i = 0; i < 27; i++) {
     //     sscanf(buf + (i * 2), "%2hhx", &txbuf[i]); // Convert each pair of hexadecimal characters to uint8_t
@@ -460,6 +457,7 @@ void debug_socket_behaviour(uint8_t *buf, datasize_t len, uint8_t owning_socket)
         if(owning_socket != AUDIO_SOCKET_TCP_SERVER){ send(3, assignTelnetSuffix(buf, len), len+2);}
         else hexToTelnet(buf);
     }   
+    UART_TO_DEBUG = socket_to_debug; // copy socket to debug over to the UART_Communication class
     copyToSerial(buf, len, owning_socket);
 }
 

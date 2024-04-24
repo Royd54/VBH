@@ -4,6 +4,70 @@
 #include "socket.h"
 #include "stdint-gcc.h"
 
+int received_data_index = 0;  // Index to keep track of the current position in the buffer
+char received_data_interrupt[256];  // Define a buffer to store received data
+
+int UART_INTERRUPTED = 0;
+
+void uart_rx_interrupt() {
+    uint8_t data;
+    uart_inst_t *triggeredBy = NULL;
+    int uart_index = 0;
+
+if (uart_is_readable(UART0_ID)) {
+    triggeredBy = UART0_ID;
+    uart_index = 0;
+}
+if (uart_is_readable(UART1_ID)) {
+    triggeredBy = UART1_ID;
+    uart_index = 1;
+}
+
+    // Read the received data from UART0
+    // while(triggeredBy && uart_is_readable(triggeredBy)) {   
+    //     data = uart_getc(triggeredBy);
+    //     // Check if the received data is not '\r' and the buffer is not full
+    //     if (data != '\r' && received_data_index < 256 - 1) {
+    //         received_data_interrupt[received_data_index++] = data;  // Store the received character in the buffer
+    //     } else {
+    //         // If '\r' is received or buffer is full, terminate the string
+    //         received_data_interrupt[received_data_index++] = data;
+    //         received_data_interrupt[received_data_index++] = '\n';
+    //         received_data_interrupt[received_data_index++] = '\0'; // null-terminate string
+    //         // Process the received data (e.g., print or use it)
+    //         //printf("Received data: %s\n", received_data_interrupt);
+    //         send(uart_index, received_data_interrupt, received_data_index);
+    //         if(UART_TO_DEBUG == uart_index)send(3, received_data_interrupt, received_data_index);
+    //         // Reset the buffer index for the next reception
+    //         received_data_index = 0;
+    //     }
+    // }
+
+        while (uart_is_readable(triggeredBy)) {
+        char receivedChar = uart_getc(triggeredBy);
+        if ((receivedChar == '\n' || receivedChar == '\r')) {
+            if(received_data_index > 0){
+            UART_INTERRUPTED = 1;
+            //received_data[data_index++] = '\n'; // Add '\n' and '\r' at the end of the string
+            received_data_interrupt[received_data_index++] = receivedChar;
+            received_data_interrupt[received_data_index++] = '\n';
+            // received_data[data_index] = '\n';
+            // received_data[data_index++] = '\r';
+            // received_data[data_index++] = '\0'; // null-terminate string
+            // printf("Received Data: %s on Uart%d\n", received_data, uart_index);
+            send(uart_index, received_data_interrupt, received_data_index);
+            if(UART_TO_DEBUG == uart_index)send(3, received_data_interrupt, received_data_index);
+            }
+            received_data_index = 0;  //Reset
+        } else {
+            received_data_interrupt[received_data_index++] = receivedChar;
+            if (received_data_index >= MAX_DATA_LENGTH - 1) {//was -1
+                received_data_index = 0;  //Reset 
+            }
+        }
+    }
+}
+
 //Funcion for creating uarts and settings
 void init_uart(uart_inst_t *uart, int tx_pin, int rx_pin) {
     uart_init(uart, BAUD_RATE_SET);
@@ -116,8 +180,8 @@ void UART_receiveData(uart_inst_t *uart, char socket_to_debug) {
             received_data[data_index++] = '\n';
             // received_data[data_index] = '\n';
             // received_data[data_index++] = '\r';
-            //received_data[data_index] = '\0'; // null-terminate string
-            //printf("Received Data: %s on Uart%d\n", received_data, uart_index);
+            // received_data[data_index++] = '\0'; // null-terminate string
+            // printf("Received Data: %s on Uart%d\n", received_data, uart_index);
             send(uart_index, received_data, data_index);
             if(socket_to_debug == uart_index)send(3, received_data, data_index);
             }

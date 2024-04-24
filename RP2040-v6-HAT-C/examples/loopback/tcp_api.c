@@ -231,12 +231,10 @@ void button_fade_command(cJSON *object) {
             // Interpolate values between command1 and command2
             int value_interpolated = value1 + (value2 - value1) * i / steps;
             snprintf(command, sizeof(command), ">$080111%04X\x0D\x0A", value_interpolated);
-            for(int i = 0; i < 18; i++){
-            sprintf(buttonHex, "%02X", i);
+            sprintf(buttonHex, "%02X", message->valueint);
             command[6] = buttonHex[0];
             command[7] = buttonHex[1];
             hardware_UART_send_data(UART0_ID, command);
-            }
             sleep_ms(speedItem->valueint); // Adjust delay time as needed
         }
     }else{
@@ -247,12 +245,10 @@ void button_fade_command(cJSON *object) {
             // Interpolate values between command2 and command1
             int value_interpolated = value1 + (value2 - value1) * i / steps;
             snprintf(command, sizeof(command), ">$080111%04X\x0D\x0A", value_interpolated);
-            for(int i = 0; i < 18; i++){
-            sprintf(buttonHex, "%02X", i);
+            sprintf(buttonHex, "%02X", message->valueint);
             command[6] = buttonHex[0];
             command[7] = buttonHex[1];
             hardware_UART_send_data(UART0_ID, command);
-            }
             sleep_ms(speedItem->valueint); // Adjust delay time as needed
         }
     }
@@ -309,16 +305,58 @@ void handle_command3(cJSON *object) {
 //{"cmd":"fade gui", "fade":9, "speed":50}
 // Fade in/out all ui buttons
 void fade_gui(cJSON *object){
-    cJSON *message = cJSON_GetObjectItem(object, "fade");
+    cJSON *fadeItem = cJSON_GetObjectItem(object, "fade");
     cJSON *speedItem = cJSON_GetObjectItem(object, "speed");
+    char command[22]; // Command buffer with space for null terminator
+    char buttonHex[5];
 
-    if(message->valueint > 0){
-        //fade-in with speedItem as speed value
-        printf("Fading-in gui with value: %d and speed: %d\n\n", message->valueint, speedItem->valueint);
+    char command1[] = ">$080111420D\x0D\x0A"; // First command
+    char command2[] = ">$0801110000\x0D\x0A"; // Second command
+
+    // Extract initial values from the commands
+    int value1, value2;
+    sscanf(command1, ">$080111%04X\x0D\x0A", &value1);
+    sscanf(command2, ">$080111%04X\x0D\x0A", &value2);
+    int steps = 10; // Number of steps for fading between the commands
+
+    if(fadeItem->valueint > 0){
+        // Gradually fade from command1 to command2
+        for (int i = 0; i <= steps; i++) {
+            // Interpolate values between command1 and command2
+            int value_interpolated = value1 + (value2 - value1) * i / steps;
+            snprintf(command, sizeof(command), ">$080111%04X\x0D\x0A", value_interpolated);
+            for(int i = 0; i < 18; i++){
+            sprintf(buttonHex, "%02X", i);
+            printf("BEZIG");
+            command[6] = buttonHex[0];
+            command[7] = buttonHex[1];
+            hardware_UART_send_data(UART0_ID, command);
+            }
+            sleep_ms(speedItem->valueint); // Adjust delay time as needed
+            if (UART_INTERRUPTED) {
+                break; // Exit the loop if fading should stop
+            }
+        }
     }else{
         //fade-out with speedItem as speed value
-        printf("Fading-out gui with value: %d and speed: %d\n\n", message->valueint, speedItem->valueint);
+        // Gradually fade from command2 back to command1
+        for (int i = steps; i >= 0; i--) {
+            // Interpolate values between command2 and command1
+            int value_interpolated = value1 + (value2 - value1) * i / steps;
+            snprintf(command, sizeof(command), ">$080111%04X\x0D\x0A", value_interpolated);
+            for(int i = 0; i < 18; i++){
+            sprintf(buttonHex, "%02X", i);
+            command[6] = buttonHex[0];
+            command[7] = buttonHex[1];
+            hardware_UART_send_data(UART0_ID, command);
+            }
+            sleep_ms(speedItem->valueint); // Adjust delay time as needed
+            if (UART_INTERRUPTED) {
+                break; // Exit the loop if fading should stop
+            }
+        }
     }
+        UART_INTERRUPTED = 0;
 }
 
 // {"cmd":"press button", "button": 10}
@@ -347,28 +385,53 @@ void press_button(cJSON *object){
 // {"cmd":"fade button group", "buttons": [1,2,10,17], "fade": 1, "speed": 50}
 // Fade button leds per group
 void fade_button_group(cJSON *object){
-    cJSON *dataItem = cJSON_GetObjectItem(object, "buttons");
-    cJSON *message = cJSON_GetObjectItem(object, "fade");
+    cJSON *message = cJSON_GetObjectItem(object, "buttons");
+    cJSON *fadeItem = cJSON_GetObjectItem(object, "fade");
     cJSON *speedItem = cJSON_GetObjectItem(object, "speed");
-    // printf("Handling 2nd command type:\n - 1st: %d\n - 2nd: %s\n", dataItem->child->valueint, dataItem->child->next->valuestring);
 
-    if (dataItem != NULL) {
-        // Iterate over the array elements
-        int array_size = cJSON_GetArraySize(dataItem);
-        printf("Array size: %d\n", array_size);
-        for (int i = 0; i < array_size; ++i) {
-            cJSON *item = cJSON_GetArrayItem(dataItem, i);
-            if(message->valueint > 0){
-                //fade-in with speedItem as speed value
-                printf("Fading-in button: %d with speed: %d\n", item->valueint, speedItem->valueint);
-            }else{
-                //fade-out with speedItem as speed value
-                printf("Fading-out button: %d with speed: %d\n", item->valueint, speedItem->valueint);
+    int array_size = cJSON_GetArraySize(message);
+
+    char command[22]; // Command buffer with space for null terminator
+    char buttonHex[5];
+    char command1[] = ">$080111420D\x0D\x0A"; // First command
+    char command2[] = ">$0801110000\x0D\x0A"; // Second command
+
+    // Extract initial values from the commands
+    int value1, value2;
+    sscanf(command1, ">$080111%04X\x0D\x0A", &value1);
+    sscanf(command2, ">$080111%04X\x0D\x0A", &value2);
+    int steps = 10; // Number of steps for fading between the commands
+
+    if(fadeItem->valueint > 0){
+        // printf("API fade-in button: %d and speed: %d\n\n", message->valueint, speedItem->valueint);
+        // Gradually fade from command1 to command2
+        for (int i = 0; i <= steps; i++) {
+            // Interpolate values between command1 and command2
+            int value_interpolated = value1 + (value2 - value1) * i / steps;
+            snprintf(command, sizeof(command), ">$080111%04X\x0D\x0A", value_interpolated);
+            for(int i = 0; i < array_size; i++){
+            sprintf(buttonHex, "%02X", cJSON_GetArrayItem(message, i)->valueint);
+            command[6] = buttonHex[0];
+            command[7] = buttonHex[1];
+            hardware_UART_send_data(UART0_ID, command);
             }
+            sleep_ms(speedItem->valueint); // Adjust delay time as needed
         }
-        printf("\n");
     }else{
-        printf("Invalid or missing buttons item field in JSON\n\n");
+        // printf("API fade-out button: %d and speed: %d\n\n", message->valueint, speedItem->valueint);
+        // Gradually fade from command2 back to command1
+        for (int i = steps; i >= 0; i--) {
+            // Interpolate values between command2 and command1
+            int value_interpolated = value1 + (value2 - value1) * i / steps;
+            snprintf(command, sizeof(command), ">$080111%04X\x0D\x0A", value_interpolated);
+            for(int i = 0; i < array_size; i++){
+            sprintf(buttonHex, "%02X", cJSON_GetArrayItem(message, i)->valueint);
+            command[6] = buttonHex[0];
+            command[7] = buttonHex[1];
+            hardware_UART_send_data(UART0_ID, command);
+            }
+            sleep_ms(speedItem->valueint); // Adjust delay time as needed
+        }
     }
 }
 

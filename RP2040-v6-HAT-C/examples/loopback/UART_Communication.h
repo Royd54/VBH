@@ -10,6 +10,9 @@
 // Used for instantiating hardware uart (saving baudrate settings)
 unsigned int BAUD_RATE_SET = 38400;
 
+// Used to check if the data on uart needs to be debugged to a debug socket
+unsigned int UART_TO_DEBUG;
+
 //Timing calculated by 1/BAUD_RATE*1000000 for waiting the correct amount of time(in microseconds) according to the baudrate 
 //Used for software uart
 #define BAUD_RATE_TIMING 26//(1e6/57600) //26 for 38400
