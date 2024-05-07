@@ -4,6 +4,8 @@
 #include "socket.h"
 #include "stdint-gcc.h"
 
+#include "tcp_api.h"
+
 int received_data_index = 0;  // Index to keep track of the current position in the buffer
 char received_data_interrupt[256];  // Define a buffer to store received data
 
@@ -14,47 +16,23 @@ void uart_rx_interrupt() {
     uart_inst_t *triggeredBy = NULL;
     int uart_index = 0;
 
-if (uart_is_readable(UART0_ID)) {
-    triggeredBy = UART0_ID;
-    uart_index = 0;
-}
-if (uart_is_readable(UART1_ID)) {
-    triggeredBy = UART1_ID;
-    uart_index = 1;
-}
-
-    // Read the received data from UART0
-    // while(triggeredBy && uart_is_readable(triggeredBy)) {   
-    //     data = uart_getc(triggeredBy);
-    //     // Check if the received data is not '\r' and the buffer is not full
-    //     if (data != '\r' && received_data_index < 256 - 1) {
-    //         received_data_interrupt[received_data_index++] = data;  // Store the received character in the buffer
-    //     } else {
-    //         // If '\r' is received or buffer is full, terminate the string
-    //         received_data_interrupt[received_data_index++] = data;
-    //         received_data_interrupt[received_data_index++] = '\n';
-    //         received_data_interrupt[received_data_index++] = '\0'; // null-terminate string
-    //         // Process the received data (e.g., print or use it)
-    //         //printf("Received data: %s\n", received_data_interrupt);
-    //         send(uart_index, received_data_interrupt, received_data_index);
-    //         if(UART_TO_DEBUG == uart_index)send(3, received_data_interrupt, received_data_index);
-    //         // Reset the buffer index for the next reception
-    //         received_data_index = 0;
-    //     }
-    // }
+    if (uart_is_readable(UART0_ID)) {
+        triggeredBy = UART0_ID;
+        uart_index = 0;
+    }
+    if (uart_is_readable(UART1_ID)) {
+        triggeredBy = UART1_ID;
+        uart_index = 1;
+    }
 
         while (uart_is_readable(triggeredBy)) {
         char receivedChar = uart_getc(triggeredBy);
         if ((receivedChar == '\n' || receivedChar == '\r')) {
             if(received_data_index > 0){
             UART_INTERRUPTED = 1;
-            //received_data[data_index++] = '\n'; // Add '\n' and '\r' at the end of the string
             received_data_interrupt[received_data_index++] = receivedChar;
             received_data_interrupt[received_data_index++] = '\n';
-            // received_data[data_index] = '\n';
-            // received_data[data_index++] = '\r';
-            // received_data[data_index++] = '\0'; // null-terminate string
-            // printf("Received Data: %s on Uart%d\n", received_data, uart_index);
+            getButtonState(received_data_interrupt); //sleeps uitzetten in commands als dit aan gaat
             send(uart_index, received_data_interrupt, received_data_index);
             if(UART_TO_DEBUG == uart_index)send(3, received_data_interrupt, received_data_index);
             }
@@ -64,6 +42,17 @@ if (uart_is_readable(UART1_ID)) {
             if (received_data_index >= MAX_DATA_LENGTH - 1) {//was -1
                 received_data_index = 0;  //Reset 
             }
+        }
+    }
+}
+
+void reset_UART_interrupt_flag(){
+    if(UART_INTERRUPTED == 1){
+        if (!uart_is_readable(UART0_ID)) {
+            UART_INTERRUPTED = 0;
+        }
+        if (!uart_is_readable(UART1_ID)) {
+            UART_INTERRUPTED = 0;
         }
     }
 }
@@ -90,21 +79,27 @@ void delay_us(uint32_t us) {
     busy_wait_us(us);
 }
 
+//Function for creating a us delay using a busy wait loop. This is more accurate then the delay_us function's method
+void delay_us_busy_waiting(uint32_t us) {
+    uint32_t start_time = time_us_32();
+    while (time_us_32() - start_time < us);
+}
+
 //Function for transmitting HEX commands trough the GPIO pins of the Software UART
 void uart_transmit_command(uint8_t data) {
     // Start bit
     gpio_put(SOFTWARE_TX_PIN, 0);
-    delay_us(BAUD_RATE_TIMING);
+    delay_us_busy_waiting(BAUD_RATE_TIMING_PRECISE);
 
     // 8 data bits, LSB first
     for (int i = 0; i < 8; i++) {
         gpio_put(SOFTWARE_TX_PIN, (data >> i) & 1);
-        delay_us(BAUD_RATE_TIMING);
+        delay_us_busy_waiting(BAUD_RATE_TIMING_PRECISE);
     }
 
     // Stop bit
     gpio_put(SOFTWARE_TX_PIN, 1);
-    delay_us(BAUD_RATE_TIMING);
+    delay_us_busy_waiting(BAUD_RATE_TIMING_PRECISE);
 }
 
 //Function for receiving HEX commands using the GPIO pins of the software UART

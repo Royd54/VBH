@@ -221,7 +221,18 @@ int main()
         socket_behaviour(SOCKET3_TCP_SERVER, PORT3_TCP_SERVER, &messageReceivedTimer3);
         init_server_socket(DEBUG_SOCKET_TCP_SERVER, g_tcp_server_buf, DEBUG_PORT_TCP_SERVER);
         init_api_socket(API_SOCKET_TCP_SERVER, g_tcp_server_buf, API_PORT_TCP_SERVER);
+        reset_UART_interrupt_flag();
         //test();
+
+        // getButtonState("<$06130500\x0D\x0A");
+
+        // printf("\nFinal state of buttons:\n");
+        // for (int i = 0; i < NUM_BUTTONS; i++) {
+        //     printf("Button %d: %s\n", i, buttonState[i] ? "Active" : "Inactive");
+        // }
+
+        // sleep_ms(1000);
+
     }
 }
 

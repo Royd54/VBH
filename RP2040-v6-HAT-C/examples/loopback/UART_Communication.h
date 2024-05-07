@@ -16,6 +16,7 @@ unsigned int UART_TO_DEBUG;
 //Timing calculated by 1/BAUD_RATE*1000000 for waiting the correct amount of time(in microseconds) according to the baudrate 
 //Used for software uart
 #define BAUD_RATE_TIMING 26//(1e6/57600) //26 for 38400
+#define BAUD_RATE_TIMING_PRECISE 26.0417 // Delay in microseconds for baud rate of 38400
 
 //uart0 ID
 #define UART0_ID uart0

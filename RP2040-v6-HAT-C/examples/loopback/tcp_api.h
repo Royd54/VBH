@@ -1,0 +1,1 @@
+extern void getButtonState(char command[]);
