@@ -32,9 +32,10 @@ void uart_rx_interrupt() {
             UART_INTERRUPTED = 1;
             received_data_interrupt[received_data_index++] = receivedChar;
             received_data_interrupt[received_data_index++] = '\n';
-            getButtonState(received_data_interrupt); //sleeps uitzetten in commands als dit aan gaat
-            send(uart_index, received_data_interrupt, received_data_index);
-            if(UART_TO_DEBUG == uart_index)send(3, received_data_interrupt, received_data_index);
+            received_data_interrupt[received_data_index++] = '\0';/////////////// als niet meer werkt dit weghalen
+            getButtonState(received_data_interrupt, uart_index); //sleeps uitzetten in commands als dit aan gaat
+            //send(uart_index, received_data_interrupt, received_data_index);
+            //if(UART_TO_DEBUG == uart_index)send(3, received_data_interrupt, received_data_index);
             }
             received_data_index = 0;  //Reset
         } else {

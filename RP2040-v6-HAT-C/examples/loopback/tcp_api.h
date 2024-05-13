@@ -1,1 +1,1 @@
-extern void getButtonState(char command[]);
+extern void getButtonState(char command[], int uart_index);

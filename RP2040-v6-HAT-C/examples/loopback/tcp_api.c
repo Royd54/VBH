@@ -27,7 +27,7 @@ void update_system_ip(cJSON *object);
 void update_system_baudrate(cJSON *object);
 void update_socket_inactive_timer(cJSON *object);
 
-void checkDependancy(char buttonIndex, bool state);
+void updateButtonStates(int buttons[], bool state, int buttonAmount);
 // void getButtonState(char command[]);
 void setButtonActivity();
 void playSoundEffect(int sound, int volume);
@@ -61,108 +61,67 @@ CommandHandler command_handlers[] = {
     // Add more commands as needed
 };
 
+// Function to check if a command matches any element in the given array
+int matchesCommand(char *command, char *commands[], int numCommands) {
+    for (int i = 0; i < numCommands; i++) {
+        if (strncmp(command, commands[i], 10) == 0) {
+            return 1; // Command matches an element in the array
+        }
+    }
+    return 0; // Command does not match any element in the array
+}
+
 #include <stdbool.h>
+#include <string.h>
 #define NUM_BUTTONS 18
 // Define the state of each button
 bool buttonState[NUM_BUTTONS] = {false};
-
+char *buttonReleaseCommands[] = {"<$06130100", "<$06130200","<$06130300", "<$06130400","<$06130500", "<$06130600","<$06130700", "<$06130800","<$06130900", "<$06130A00","<$06130B00", "<$06130C00","<$06130D00", "<$06130E00","<$06130F00", "<$06131000","<$06131100"};
+char *buttonPressCommands[] = {"<$061301FF", "<$061302FF","<$061303FF", "<$061304FF","<$061305FF", "<$061306FF","<$061307FF", "<$061308FF","<$061309FF", "<$06130AFF","<$06130BFF", "<$06130CFF","<$06130DFF", "<$06130EFF","<$06130FFF", "<$061310FF","<$061311FF"};
+char *buttonBehaviour[] = {"LightsDay", "LightsNight", "LightsMoody", "LightsOff","LightsMenu","Thermostat","Up","Call","Curtains","Down","MusicMenu","MusicBack","LightsMenu","MusicPause","MusicForward","Power","V"};
+                                                                                                                                                                   //MusicPlay
 // Check if a button is turned on or off. After that handle behaviour based on wanted activity.
-void getButtonState(char command[]){
+void getButtonState(char command[], int uart_index){
     char buttonHex[3] = {command[6], command[7], '\0'}; // Extract button index from hex command
     int value = strtol(buttonHex, NULL, 16); // Convert hex string to integer
-    for(int i = 0; i < NUM_BUTTONS;i++){
-        if(i == value){
-            if(buttonState[i] == true){
-                buttonState[i] = false;
-                checkDependancy(value, false);
-                // printf("%s", command);
-                return;
-            }else{
-                buttonState[i] = true;
-                checkDependancy(value, true);
-            }
-        }
+    // if(command[8] == 'F' && command[9] == 'F'){
+    //     for(int i = 0; i < NUM_BUTTONS;i++){
+    //         if(i == value){
+    //             if(buttonState[i] == true){
+    //                 buttonState[i] = false;
+    //                 return;
+    //             }else{
+    //                 buttonState[i] = true;
+    //             }
+    //         }
+    //     }
+    // }
+
+    char str[20]; // Assuming enough space for the resulting string
+    if (matchesCommand(command, buttonPressCommands, sizeof(buttonPressCommands) / sizeof(buttonPressCommands[0]))) {
+        // printf("Button is pressed.\n");
+        sprintf(str, "BP_%s\r\n", buttonBehaviour[value-1]);
+        // Handle behavior for button press
+        send(uart_index, str, strlen(str));
+        if(UART_TO_DEBUG == uart_index)send(3,  str, strlen(str));
+    } else if (matchesCommand(command, buttonReleaseCommands, sizeof(buttonReleaseCommands) / sizeof(buttonReleaseCommands[0]))) {
+        // printf("Button is released.\n");
+        //sprintf(str, "BR_%d\r\n", value);
+        sprintf(str, "BR_%s\r\n",  buttonBehaviour[value-1]);
+        // Handle behavior for button release
+        send(uart_index, str, strlen(str));
+        if(UART_TO_DEBUG == uart_index)send(3,  str, strlen(str));
+    } else {
+        printf("Unknown command.\n");
+        // Handle behavior for unknown command
     }
 }
 
 // Check if buttons need to be activated based on specific button activity.
-void checkDependancy(char buttonIndex, bool state){
-    switch (buttonIndex)
-    {
-    case 5:
-        buttonState[1] = state;
-        buttonState[2] = state;
-        buttonState[3] = state;
-        buttonState[4] = state;
-        int buttonStates[] = {1,2,3,4};
-        playSoundEffect(39,70);
-        setButtonActivity(buttonStates,state,10,4);
-        break;
-    case 11:
-        buttonState[12] = state;
-        buttonState[13] = state;
-        buttonState[14] = state;
-        buttonState[15] = state;
-        int buttonStates3[] = {12,13,14,15};
-        setButtonActivity(buttonStates3,state,10,4);
-        break;
-    case 16:
-        for(int i = 1; i < NUM_BUTTONS; i++){
-            buttonState[i] = state;
-        }
-        int buttonStates2[] = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17};
-        setButtonActivity(buttonStates2,state,10,16);
-        break;
-    case 17:
-        buttonState[5] = state;
-        buttonState[6] = state;
-        buttonState[7] = state;
-        buttonState[8] = state;
-        buttonState[9] = state;
-        buttonState[10] = state;
-        buttonState[11] = state;
-        int buttonStates4[] = {5,6,7,8,9,10,11,16};
-        setButtonActivity(buttonStates4,state,10,8);
-        break;
-    default:
-        break;
-    }
-}
-
-// Play sound effect using the API/JSON. 
-void playSoundEffect(int sound, int volume){
-    // Create a JSON object and populate it
-    //{"cmd":"play sound", "sound": 39, "volume": 70}
-    cJSON *root = cJSON_CreateObject();
-    cJSON_AddStringToObject(root, "cmd", "play sound");
-    cJSON_AddNumberToObject(root, "sound", sound);
-    cJSON_AddNumberToObject(root, "volume", volume);                
-    play_sound(root);
-    // Free resources
-    cJSON_Delete(root);
-}
-
-// Set the button activity using the API/JSON. Turn the buttons on/off, fade-in/fade-out. 
-void setButtonActivity(int buttons[],int fade, int speed, int buttonAmount){
-    // Create a JSON object and populate it
-    //{"cmd":"fade button group", "buttons": [1,2,3,4], "fade": 0, "speed": 10}
-    cJSON *root = cJSON_CreateObject();
-    // Create a cJSON array
-    cJSON *buttons_array = cJSON_CreateArray();
-    cJSON_AddStringToObject(root, "cmd", "fade button group");
-
+void updateButtonStates(int buttons[], bool state, int buttonAmount){
     for(int i = 0; i < buttonAmount; i++){
-        cJSON_AddItemToArray(buttons_array, cJSON_CreateNumber(buttons[i]));
+        buttonState[buttons[i]] = state;
     }
-
-    // Add the array to the root object
-    cJSON_AddItemToObject(root, "buttons", buttons_array);
-    cJSON_AddNumberToObject(root, "fade", fade);
-    cJSON_AddNumberToObject(root, "speed", speed);                 
-    fade_button_group(root);
-
-    // Free resources
-    cJSON_Delete(root);
 }
 
 // Initialize api socket 
@@ -452,22 +411,29 @@ void fade_gui(cJSON *object){
             int value_interpolated = value1 + (value2 - value1) * i / steps;
             snprintf(command, sizeof(command), ">$080111%04X\x0D\x0A", value_interpolated);
             for(int i = 0; i < 18; i++){
-                sprintf(buttonHex, "%02X", i);
-                command[6] = buttonHex[0];
-                command[7] = buttonHex[1];
-                hardware_UART_send_data(UART0_ID, command);
-            }
-            sleep_ms(speedItem->valueint); // Adjust delay time as needed
-            if (UART_INTERRUPTED) {
-                snprintf(command, sizeof(command), ">$080111%04X\x0D\x0A", value2);
-                for(int i = 0; i < 18; i++){
+                if(buttonState[i] == true){
                     sprintf(buttonHex, "%02X", i);
                     command[6] = buttonHex[0];
                     command[7] = buttonHex[1];
                     hardware_UART_send_data(UART0_ID, command);
                 }
-                break; // Exit the loop if fading should stop
             }
+            sleep_ms(speedItem->valueint); // Adjust delay time as needed
+            if (UART_INTERRUPTED) {
+                snprintf(command, sizeof(command), ">$080111%04X\x0D\x0A", value2);
+                for(int i = 0; i < 18; i++){
+                    if(buttonState[i] == true){
+                        sprintf(buttonHex, "%02X", i);
+                        command[6] = buttonHex[0];
+                        command[7] = buttonHex[1];
+                        hardware_UART_send_data(UART0_ID, command);
+                    }
+                    break; // Exit the loop if fading should stop
+                }
+            }
+        }
+        for(int i = 0; i < 18; i++){
+            buttonState[i] = false;
         }
     }else{
         //fade-out with speedItem as speed value
@@ -477,22 +443,29 @@ void fade_gui(cJSON *object){
             int value_interpolated = value1 + (value2 - value1) * i / steps;
             snprintf(command, sizeof(command), ">$080111%04X\x0D\x0A", value_interpolated);
             for(int i = 0; i < 18; i++){
-                sprintf(buttonHex, "%02X", i);
-                command[6] = buttonHex[0];
-                command[7] = buttonHex[1];
-                hardware_UART_send_data(UART0_ID, command);
-            }
-            sleep_ms(speedItem->valueint); // Adjust delay time as needed
-            if (UART_INTERRUPTED) {
-                snprintf(command, sizeof(command), ">$080111%04X\x0D\x0A", value1);
-                for(int i = 0; i < 18; i++){
+                if(buttonState[i] == false){
                     sprintf(buttonHex, "%02X", i);
                     command[6] = buttonHex[0];
                     command[7] = buttonHex[1];
                     hardware_UART_send_data(UART0_ID, command);
                 }
+            }
+            sleep_ms(speedItem->valueint); // Adjust delay time as needed
+            if (UART_INTERRUPTED) {
+                snprintf(command, sizeof(command), ">$080111%04X\x0D\x0A", value1);
+                for(int i = 0; i < 18; i++){
+                    if(buttonState[i] == false){
+                        sprintf(buttonHex, "%02X", i);
+                        command[6] = buttonHex[0];
+                        command[7] = buttonHex[1];
+                        hardware_UART_send_data(UART0_ID, command);
+                    }
+                }
                 break; // Exit the loop if fading should stop
             }
+        }
+        for(int i = 0; i < 18; i++){
+            buttonState[i] = true;
         }
     }
         // UART_INTERRUPTED = 0;
@@ -543,6 +516,12 @@ void fade_button_group(cJSON *object){
     if(fadeItem->valueint > 0){
         // printf("API fade-in button: %d and speed: %d\n\n", message->valueint, speedItem->valueint);
         // Gradually fade from command1 to command2
+        int buttons [array_size];
+        for(int i = 0; i < array_size; i++){
+            buttons[i] = cJSON_GetArrayItem(message, i)->valueint;
+        }
+        updateButtonStates(buttons, false, array_size);
+
         for (int i = 0; i <= steps; i++) {
             // Interpolate values between command1 and command2
             int value_interpolated = value1 + (value2 - value1) * i / steps;
@@ -553,7 +532,7 @@ void fade_button_group(cJSON *object){
                 command[7] = buttonHex[1];
                 hardware_UART_send_data(UART0_ID, command);
             }
-            // sleep_ms(speedItem->valueint); // Adjust delay time as needed
+            sleep_ms(speedItem->valueint); // Adjust delay time as needed
             if (UART_INTERRUPTED) {
                 snprintf(command, sizeof(command), ">$080111%04X\x0D\x0A", value2);
                 for(int i = 0; i < array_size; i++){
@@ -568,6 +547,12 @@ void fade_button_group(cJSON *object){
     }else{
         // printf("API fade-out button: %d and speed: %d\n\n", message->valueint, speedItem->valueint);
         // Gradually fade from command2 back to command1
+        int buttons [array_size];
+        for(int i = 0; i < array_size; i++){
+            buttons[i] = cJSON_GetArrayItem(message, i)->valueint;
+        }
+        updateButtonStates(buttons, true, array_size);
+        
         for (int i = steps; i >= 0; i--) {
             // Interpolate values between command2 and command1
             int value_interpolated = value1 + (value2 - value1) * i / steps;
@@ -578,7 +563,7 @@ void fade_button_group(cJSON *object){
                 command[7] = buttonHex[1];
                 hardware_UART_send_data(UART0_ID, command);
             }
-            // sleep_ms(speedItem->valueint); // Adjust delay time as needed
+            sleep_ms(speedItem->valueint); // Adjust delay time as needed
             if (UART_INTERRUPTED) {
                 snprintf(command, sizeof(command), ">$080111%04X\x0D\x0A", value1);
                 for(int i = 0; i < array_size; i++){

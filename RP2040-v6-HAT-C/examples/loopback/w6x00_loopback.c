@@ -189,6 +189,8 @@ int main()
     uart_set_irq_enables(UART0_ID, true, false);
     uart_set_irq_enables(UART1_ID, true, false);
 
+    hardware_UART_send_data(UART0_ID, ">$080111420D\x0D\x0A");/////////////////////////////////////////////////////////////////////////////////////
+
     /* Infinite loop */
     while (1)
     {
