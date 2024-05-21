@@ -2,7 +2,11 @@
 #include "../libraries/cJSON/cJSON.h"
 #include "tcp_server.c"
 #include "tcp_api.h"
+#include <stdbool.h>
+#include <string.h>
 
+#define NUM_BUTTONS 18
+#define NUM_COMMANDS 17
 #define DATA_BUF_SIZE 2048 // Max size of the data buffer
 
 void api_socket_behaviour(uint8_t *buf, datasize_t len, char *item);
@@ -12,6 +16,7 @@ void button_fade_command(cJSON *object);
 void handle_command2(cJSON *object);
 void handle_command3(cJSON *object);
 void fade_gui(cJSON *object);
+void fade_menu(cJSON *object);
 void press_button(cJSON *object);
 void fade_button_group(cJSON *object);
 void set_button_brightness(cJSON *object);
@@ -26,11 +31,27 @@ void set_haptic_intensity(cJSON *object);
 void update_system_ip(cJSON *object);
 void update_system_baudrate(cJSON *object);
 void update_socket_inactive_timer(cJSON *object);
+void set_button_function(cJSON *object);
 
 void updateButtonStates(int buttons[], bool state, int buttonAmount);
 // void getButtonState(char command[]);
 void setButtonActivity();
 void playSoundEffect(int sound, int volume);
+
+// Define the state of each button
+bool buttonState[NUM_BUTTONS] = {false};
+// Button release commands
+char *buttonReleaseCommands[] = {"<$06130100", "<$06130200","<$06130300", "<$06130400","<$06130500", "<$06130600","<$06130700", "<$06130800","<$06130900", "<$06130A00","<$06130B00", "<$06130C00","<$06130D00", "<$06130E00","<$06130F00", "<$06131000","<$06131100"};
+// Button press commands
+char *buttonPressCommands[] = {"<$061301FF", "<$061302FF","<$061303FF", "<$061304FF","<$061305FF", "<$061306FF","<$061307FF", "<$061308FF","<$061309FF", "<$06130AFF","<$06130BFF", "<$06130CFF","<$06130DFF", "<$06130EFF","<$06130FFF", "<$061310FF","<$061311FF"};
+// Assigned button functions (index of array stands for button number. So buttonBehaviour[3] = button 3)
+char *buttonBehaviour[] = {"LightsDay", "LightsNight", "LightsMoody", "LightsOff","LightsMenu","Thermostat","Up","Call","Curtains","Down","MusicMenu","MusicBack","MusicPlay","MusicPause","MusicForward","Power","V"};
+
+// Struct for applying settings/functions to the buttons.
+typedef struct {
+    char setting[20];
+} ButtonSettings;
+ButtonSettings buttonSettings[NUM_BUTTONS]; // Array index (+1) corresponds with physical button index (button [0] is physical 1)
 
 // Structure to represent a command and its handler function
 typedef struct {
@@ -44,6 +65,7 @@ CommandHandler command_handlers[] = {
     {"cmd2", handle_command2},                                      // {"cmd":"cmd2", "data":{"id":10, "name":"test"}}
     {"cmd3", handle_command3},                                      // {"cmd":"cmd3", "buttons":[1,2,3,100,200]}
     {"fade gui", fade_gui},                                         // {"cmd":"fade gui", "fade":9, "speed":50}
+    {"fade menu", fade_menu},                                       // {"cmd":"fade menu", "fade":9, "speed":50}
     {"press button", press_button},                                 // {"cmd":"press button", "button": 10}
     {"fade button group", fade_button_group},                       // {"cmd":"fade button group", "buttons": [1,2,10,17], "fade": 1, "speed": 50}
     {"set button brightness", set_button_brightness},               // {"cmd":"set button brightness", "button": 5, "brightness": 20}
@@ -58,6 +80,7 @@ CommandHandler command_handlers[] = {
     {"update system ip", update_system_ip},                         // {"cmd":"update system ip","ip": "10.12.99.215"}
     {"update system baudrate", update_system_baudrate},             // {"cmd":"update system baudrate","baudrate uart 1": 38400, "baudrate uart 2": 0}
     {"update socket inactive timer", update_socket_inactive_timer}, // {"cmd":"update socket inactive timer","ms": 40000}
+    {"set button function", set_button_function},                   // {"cmd":"set button function","button": 2,"function": "LightsMenu"}
     // Add more commands as needed
 };
 
@@ -71,49 +94,28 @@ int matchesCommand(char *command, char *commands[], int numCommands) {
     return 0; // Command does not match any element in the array
 }
 
-#include <stdbool.h>
-#include <string.h>
-#define NUM_BUTTONS 18
-// Define the state of each button
-bool buttonState[NUM_BUTTONS] = {false};
-char *buttonReleaseCommands[] = {"<$06130100", "<$06130200","<$06130300", "<$06130400","<$06130500", "<$06130600","<$06130700", "<$06130800","<$06130900", "<$06130A00","<$06130B00", "<$06130C00","<$06130D00", "<$06130E00","<$06130F00", "<$06131000","<$06131100"};
-char *buttonPressCommands[] = {"<$061301FF", "<$061302FF","<$061303FF", "<$061304FF","<$061305FF", "<$061306FF","<$061307FF", "<$061308FF","<$061309FF", "<$06130AFF","<$06130BFF", "<$06130CFF","<$06130DFF", "<$06130EFF","<$06130FFF", "<$061310FF","<$061311FF"};
-char *buttonBehaviour[] = {"LightsDay", "LightsNight", "LightsMoody", "LightsOff","LightsMenu","Thermostat","Up","Call","Curtains","Down","MusicMenu","MusicBack","LightsMenu","MusicPause","MusicForward","Power","V"};
-                                                                                                                                                                   //MusicPlay
 // Check if a button is turned on or off. After that handle behaviour based on wanted activity.
 void getButtonState(char command[], int uart_index){
     char buttonHex[3] = {command[6], command[7], '\0'}; // Extract button index from hex command
-    int value = strtol(buttonHex, NULL, 16); // Convert hex string to integer
-    // if(command[8] == 'F' && command[9] == 'F'){
-    //     for(int i = 0; i < NUM_BUTTONS;i++){
-    //         if(i == value){
-    //             if(buttonState[i] == true){
-    //                 buttonState[i] = false;
-    //                 return;
-    //             }else{
-    //                 buttonState[i] = true;
-    //             }
-    //         }
-    //     }
-    // }
+    int value = strtol(buttonHex, NULL, 16);            // Convert hex string to integer
 
     char str[20]; // Assuming enough space for the resulting string
-    if (matchesCommand(command, buttonPressCommands, sizeof(buttonPressCommands) / sizeof(buttonPressCommands[0]))) {
-        // printf("Button is pressed.\n");
-        sprintf(str, "BP_%s\r\n", buttonBehaviour[value-1]);
+    if (matchesCommand(command, buttonPressCommands, NUM_COMMANDS)) {
         // Handle behavior for button press
+        // printf("Button is pressed.\n");
+        sprintf(str, "BP_%s\r\n", buttonSettings[value-1].setting);
         send(uart_index, str, strlen(str));
         if(UART_TO_DEBUG == uart_index)send(3,  str, strlen(str));
-    } else if (matchesCommand(command, buttonReleaseCommands, sizeof(buttonReleaseCommands) / sizeof(buttonReleaseCommands[0]))) {
+    } else if (matchesCommand(command, buttonReleaseCommands, NUM_COMMANDS)) {
+        // Handle behavior for button release
         // printf("Button is released.\n");
         //sprintf(str, "BR_%d\r\n", value);
-        sprintf(str, "BR_%s\r\n",  buttonBehaviour[value-1]);
-        // Handle behavior for button release
+        sprintf(str, "BR_%s\r\n",  buttonSettings[value-1].setting);
         send(uart_index, str, strlen(str));
         if(UART_TO_DEBUG == uart_index)send(3,  str, strlen(str));
     } else {
-        printf("Unknown command.\n");
         // Handle behavior for unknown command
+        // printf("Unknown command.\n");
     }
 }
 
@@ -293,6 +295,7 @@ void button_fade_command(cJSON *object) {
     int steps = 10; // Number of steps for fading between the commands
 
     if(fadeItem->valueint > 0){
+        updateButtonStates((int*)message->valueint, false, 1);
         //fade-in with speedItem as speed value
         printf("API fade-in button: %d and speed: %d\n\n", message->valueint, speedItem->valueint);
         // Gradually fade from command1 to command2
@@ -315,6 +318,7 @@ void button_fade_command(cJSON *object) {
             }
         }
     }else{
+        updateButtonStates((int*)message->valueint, true, 1);
         //fade-out with speedItem as speed value
         printf("API fade-out button: %d and speed: %d\n\n", message->valueint, speedItem->valueint);
         // Gradually fade from command2 back to command1
@@ -471,6 +475,63 @@ void fade_gui(cJSON *object){
         // UART_INTERRUPTED = 0;
 }
 
+//{"cmd":"fade gui", "fade":9, "speed":50}
+// Fade in/out all ui buttons
+void fade_menu(cJSON *object){
+    cJSON *speedItem = cJSON_GetObjectItem(object, "speed");
+    cJSON *message = cJSON_GetObjectItem(object, "menu buttons");
+    int array_size = cJSON_GetArraySize(message);
+    char command[22]; // Command buffer with space for null terminator
+    char buttonHex[5];
+
+    char command1[] = ">$080111420D\x0D\x0A"; // First command
+    char command2[] = ">$0801110000\x0D\x0A"; // Second command
+
+    // Extract initial values from the commands
+    int value1, value2;
+    sscanf(command1, ">$080111%04X\x0D\x0A", &value1);
+    sscanf(command2, ">$080111%04X\x0D\x0A", &value2);
+    int steps = 10; // Number of steps for fading between the commands
+
+    int buttons [array_size];
+    strncpy(command, command1, sizeof(command1));
+    for(int i = 0; i < array_size; i++){
+        buttons[i] = cJSON_GetArrayItem(message, i)->valueint;
+            sprintf(buttonHex, "%02X", cJSON_GetArrayItem(message, i)->valueint);
+            command[6] = buttonHex[0];
+            command[7] = buttonHex[1];
+            hardware_UART_send_data(UART0_ID, command);
+    }
+    updateButtonStates(buttons, true, array_size);
+
+    for (int i = steps; i >= 0; i--) {
+    // Interpolate values between command2 and command1
+    int value_interpolated = value1 + (value2 - value1) * i / steps;
+    snprintf(command, sizeof(command), ">$080111%04X\x0D\x0A", value_interpolated);
+    for (int i = 0; i <= 18; i++) {
+        // Check if the current number should be skipped
+        int should_skip = 0;
+        for (int j = 0; j < array_size; j++) {
+            if (i == buttons[j]) {
+                should_skip = 1;
+                break;
+            }
+        }
+
+        // Skip this iteration
+        if (should_skip) {continue;}
+
+        if(buttonState[i] == true){
+            sprintf(buttonHex, "%02X", i);
+            command[6] = buttonHex[0];
+            command[7] = buttonHex[1];
+            hardware_UART_send_data(UART0_ID, command);
+        }
+    }
+    sleep_ms(speedItem->valueint); // Adjust delay time as needed
+    }
+}
+
 // {"cmd":"press button", "button": 10}
 // Simulate a specific button being pressed
 void press_button(cJSON *object){
@@ -487,11 +548,9 @@ void press_button(cJSON *object){
     releaseStr[6] = buttonHex[0];
     releaseStr[7] = buttonHex[1];
 
-    send(0, pressStr, 12);
+    getButtonState(pressStr, 0);
     delay_us(300);
-    send(0, releaseStr, 12);
-    //>$0801110000\x0D\x0A
-    //>$080111420D\x0D\x0A
+    getButtonState(releaseStr, 0);
 }
 
 // {"cmd":"fade button group", "buttons": [1,2,10,17], "fade": 1, "speed": 50}
@@ -741,3 +800,46 @@ void update_socket_inactive_timer(cJSON *object){
     socketInactiveTimer = timerItem->valueint;
     printf("API updated socket inactive disconnect timer to: %d\n\n", timerItem->valueint);
 }
+
+// {"cmd":"set button function","button": 2,"function": "LightsMenu"}
+// Set the function of a specific button (Changes the command that the button sends when pressed or released)
+void set_button_function(cJSON *object){
+    cJSON *buttonToSet = cJSON_GetObjectItem(object, "button");
+    cJSON *buttonFunction = cJSON_GetObjectItem(object, "function");
+    // Update the struct with the new button setting
+    // Index -1, because the array starts at 0 and the physical button count starts at 1
+    snprintf(buttonSettings[buttonToSet->valueint-1].setting, sizeof(buttonSettings[buttonToSet->valueint].setting), buttonFunction->valuestring);
+}
+
+// Initialize buttons and assign settings/functions
+void init_button_settings(){
+    snprintf(buttonSettings[0].setting, 20, "LightsDay");
+    snprintf(buttonSettings[1].setting, 20, "LightsNight");
+    snprintf(buttonSettings[2].setting, 20, "LightsMoody");
+    snprintf(buttonSettings[3].setting, 20, "LightsOff");
+    snprintf(buttonSettings[4].setting, 20, "LightsMenu");
+    snprintf(buttonSettings[5].setting, 20, "Thermostat");
+    snprintf(buttonSettings[6].setting, 20, "Up");
+    snprintf(buttonSettings[7].setting, 20, "Call");
+    snprintf(buttonSettings[8].setting, 20, "Curtains");
+    snprintf(buttonSettings[9].setting, 20, "Down");
+    snprintf(buttonSettings[10].setting, 20, "MusicMenu");
+    snprintf(buttonSettings[11].setting, 20, "MusicBack");
+    snprintf(buttonSettings[12].setting, 20, "MusicPlay");
+    snprintf(buttonSettings[13].setting, 20, "MusicPause");
+    snprintf(buttonSettings[14].setting, 20, "MusicForward");
+    snprintf(buttonSettings[15].setting, 20, "Power");
+    snprintf(buttonSettings[16].setting, 20, "V");
+}
+//Oh.... mijn fout...
+//Maar dat is wel de juiste instelling
+//Hoe denk je dat op te lossen dan? Wordt het een priveles van een echte skileeraar?
+//Is die cursus trouwens pittig? 
+//Heb me dat altijd al afgevraagd.
+//In welk gebied heb je les gegeven?
+//Wat is je favoriete skill group die je les hebt gegeven?
+//Oooh joh, dan is het ski probleem al opgelost dus
+//Ga je elk jaar naar (gebied) toe?
+//Aha een echte diehard dus.
+//Doe je het al lang of?
+//Wat zijn je andere ambities naast het lesgeven?

@@ -70,7 +70,7 @@ void socket_behaviour(char socket, uint16_t port, uint16_t *timer);
 /* Flash memory interaction */
 char readCharFromFlash(unsigned int flashAdress, char shift);
 
-void test(void);
+void blinkLogo(void);
 
 char received_data2[256];  // Adjust the buffer size as needed
 
@@ -189,7 +189,8 @@ int main()
     uart_set_irq_enables(UART0_ID, true, false);
     uart_set_irq_enables(UART1_ID, true, false);
 
-    hardware_UART_send_data(UART0_ID, ">$080111420D\x0D\x0A");/////////////////////////////////////////////////////////////////////////////////////
+    init_button_settings();
+    bool systemOff = true;
 
     /* Infinite loop */
     while (1)
@@ -224,17 +225,16 @@ int main()
         init_server_socket(DEBUG_SOCKET_TCP_SERVER, g_tcp_server_buf, DEBUG_PORT_TCP_SERVER);
         init_api_socket(API_SOCKET_TCP_SERVER, g_tcp_server_buf, API_PORT_TCP_SERVER);
         reset_UART_interrupt_flag();
-        //test();
 
-        // getButtonState("<$06130500\x0D\x0A");
+        if(buttonState[16] == true){
+            systemOff = false;
+        }else{
+            systemOff = true;
+        }
 
-        // printf("\nFinal state of buttons:\n");
-        // for (int i = 0; i < NUM_BUTTONS; i++) {
-        //     printf("Button %d: %s\n", i, buttonState[i] ? "Active" : "Inactive");
-        // }
-
-        // sleep_ms(1000);
-
+        if(systemOff == true){
+            blinkLogo();
+        }
     }
 }
 
@@ -292,19 +292,23 @@ void socket_behaviour(char socket, uint16_t port, uint16_t *timer)
     }
 }
 
-void test(){
+int fadeLogo = 0;
+void blinkLogo(){
     // Create a JSON object and populate it
     cJSON *root = cJSON_CreateObject();
-    cJSON_AddNumberToObject(root, "button", 1);
-    cJSON_AddStringToObject(root, "function", "Fade");
+    cJSON *buttons_array = cJSON_CreateArray();
+    cJSON_AddStringToObject(root, "cmd", "fade button group");
+    cJSON_AddItemToArray(buttons_array, cJSON_CreateNumber(17));
+    cJSON_AddItemToObject(root, "buttons", buttons_array);
+    if(fadeLogo == 0){
+        cJSON_AddNumberToObject(root, "fade", 1);
+        fadeLogo = 1;
+    }else{
+        cJSON_AddNumberToObject(root, "fade", 0);
+        fadeLogo = 0;
+    }
 
-    // Convert JSON object to string
-    char *json_str = cJSON_Print(root);
-
-    send(API_SOCKET_TCP_SERVER, json_str, strlen(json_str));
-    sleep_ms(1000);
-
-    // Free resources
+    cJSON_AddNumberToObject(root, "speed", 50);                 
+    fade_button_group(root);
     cJSON_Delete(root);
-    free(json_str);
 }
