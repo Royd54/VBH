@@ -477,60 +477,60 @@ void fade_gui(cJSON *object){
 
 //{"cmd":"fade gui", "fade":9, "speed":50}
 // Fade in/out all ui buttons
-void fade_menu(cJSON *object){
-    cJSON *speedItem = cJSON_GetObjectItem(object, "speed");
-    cJSON *message = cJSON_GetObjectItem(object, "menu buttons");
-    int array_size = cJSON_GetArraySize(message);
-    char command[22]; // Command buffer with space for null terminator
-    char buttonHex[5];
+// void fade_menu(cJSON *object){
+//     cJSON *speedItem = cJSON_GetObjectItem(object, "speed");
+//     cJSON *message = cJSON_GetObjectItem(object, "menu buttons");
+//     int array_size = cJSON_GetArraySize(message);
+//     char command[22]; // Command buffer with space for null terminator
+//     char buttonHex[5];
 
-    char command1[] = ">$080111420D\x0D\x0A"; // First command
-    char command2[] = ">$0801110000\x0D\x0A"; // Second command
+//     char command1[] = ">$080111420D\x0D\x0A"; // First command
+//     char command2[] = ">$0801110000\x0D\x0A"; // Second command
 
-    // Extract initial values from the commands
-    int value1, value2;
-    sscanf(command1, ">$080111%04X\x0D\x0A", &value1);
-    sscanf(command2, ">$080111%04X\x0D\x0A", &value2);
-    int steps = 10; // Number of steps for fading between the commands
+//     // Extract initial values from the commands
+//     int value1, value2;
+//     sscanf(command1, ">$080111%04X\x0D\x0A", &value1);
+//     sscanf(command2, ">$080111%04X\x0D\x0A", &value2);
+//     int steps = 10; // Number of steps for fading between the commands
 
-    int buttons [array_size];
-    strncpy(command, command1, sizeof(command1));
-    for(int i = 0; i < array_size; i++){
-        buttons[i] = cJSON_GetArrayItem(message, i)->valueint;
-            sprintf(buttonHex, "%02X", cJSON_GetArrayItem(message, i)->valueint);
-            command[6] = buttonHex[0];
-            command[7] = buttonHex[1];
-            hardware_UART_send_data(UART0_ID, command);
-    }
-    updateButtonStates(buttons, true, array_size);
+//     int buttons [array_size];
+//     strncpy(command, command1, sizeof(command1));
+//     for(int i = 0; i < array_size; i++){
+//         buttons[i] = cJSON_GetArrayItem(message, i)->valueint;
+//             sprintf(buttonHex, "%02X", cJSON_GetArrayItem(message, i)->valueint);
+//             command[6] = buttonHex[0];
+//             command[7] = buttonHex[1];
+//             hardware_UART_send_data(UART0_ID, command);
+//     }
+//     updateButtonStates(buttons, true, array_size);
 
-    for (int i = steps; i >= 0; i--) {
-    // Interpolate values between command2 and command1
-    int value_interpolated = value1 + (value2 - value1) * i / steps;
-    snprintf(command, sizeof(command), ">$080111%04X\x0D\x0A", value_interpolated);
-    for (int i = 0; i <= 18; i++) {
-        // Check if the current number should be skipped
-        int should_skip = 0;
-        for (int j = 0; j < array_size; j++) {
-            if (i == buttons[j]) {
-                should_skip = 1;
-                break;
-            }
-        }
+//     for (int i = steps; i >= 0; i--) {
+//     // Interpolate values between command2 and command1
+//     int value_interpolated = value1 + (value2 - value1) * i / steps;
+//     snprintf(command, sizeof(command), ">$080111%04X\x0D\x0A", value_interpolated);
+//     for (int i = 0; i <= 18; i++) {
+//         // Check if the current number should be skipped
+//         int should_skip = 0;
+//         for (int j = 0; j < array_size; j++) {
+//             if (i == buttons[j]) {
+//                 should_skip = 1;
+//                 break;
+//             }
+//         }
 
-        // Skip this iteration
-        if (should_skip) {continue;}
+//         // Skip this iteration
+//         if (should_skip) {continue;}
 
-        if(buttonState[i] == true){
-            sprintf(buttonHex, "%02X", i);
-            command[6] = buttonHex[0];
-            command[7] = buttonHex[1];
-            hardware_UART_send_data(UART0_ID, command);
-        }
-    }
-    sleep_ms(speedItem->valueint); // Adjust delay time as needed
-    }
-}
+//         if(buttonState[i] == true){
+//             sprintf(buttonHex, "%02X", i);
+//             command[6] = buttonHex[0];
+//             command[7] = buttonHex[1];
+//             hardware_UART_send_data(UART0_ID, command);
+//         }
+//     }
+//     sleep_ms(speedItem->valueint); // Adjust delay time as needed
+//     }
+// }
 
 // {"cmd":"press button", "button": 10}
 // Simulate a specific button being pressed
@@ -831,15 +831,3 @@ void init_button_settings(){
     snprintf(buttonSettings[15].setting, 20, "Power");
     snprintf(buttonSettings[16].setting, 20, "V");
 }
-//Oh.... mijn fout...
-//Maar dat is wel de juiste instelling
-//Hoe denk je dat op te lossen dan? Wordt het een priveles van een echte skileeraar?
-//Is die cursus trouwens pittig? 
-//Heb me dat altijd al afgevraagd.
-//In welk gebied heb je les gegeven?
-//Wat is je favoriete skill group die je les hebt gegeven?
-//Oooh joh, dan is het ski probleem al opgelost dus
-//Ga je elk jaar naar (gebied) toe?
-//Aha een echte diehard dus.
-//Doe je het al lang of?
-//Wat zijn je andere ambities naast het lesgeven?

@@ -419,7 +419,10 @@ void hexToTelnet(uint8_t *buf){
     strcpy(result, formatted_output);
     //printf("Result: %s\n", result);
     free(result);
-    send(3, assignTelnetSuffix(result, formatted_length), formatted_length+2);
+    send(3, result, formatted_length);
+    // send(3, assignTelnetSuffix(result, formatted_length), formatted_length+2); use this if the commands dont contain \r\n
+    // send(3, buf, 16);
+
 }
 
 //function for checking wich menu behaviour needs to be used
