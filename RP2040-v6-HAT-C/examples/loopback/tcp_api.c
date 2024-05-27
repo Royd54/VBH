@@ -13,8 +13,6 @@ void api_socket_behaviour(uint8_t *buf, datasize_t len, char *item);
 void api_command(const char *command, cJSON *object);
 void handle_unknown_command();
 void button_fade_command(cJSON *object);
-void handle_command2(cJSON *object);
-void handle_command3(cJSON *object);
 void fade_gui(cJSON *object);
 void fade_menu(cJSON *object);
 void press_button(cJSON *object);
@@ -62,10 +60,8 @@ typedef struct {
 // Array of command handlers
 CommandHandler command_handlers[] = {
     {"button fade", button_fade_command},                           // {"cmd":"button fade", "fade":9, "speed":50, "button":1}
-    {"cmd2", handle_command2},                                      // {"cmd":"cmd2", "data":{"id":10, "name":"test"}}
-    {"cmd3", handle_command3},                                      // {"cmd":"cmd3", "buttons":[1,2,3,100,200]}
     {"fade gui", fade_gui},                                         // {"cmd":"fade gui", "fade":9, "speed":50}
-    {"fade menu", fade_menu},                                       // {"cmd":"fade menu", "fade":9, "speed":50}
+    // {"fade menu", fade_menu},                                       // {"cmd":"fade menu", "fade":9, "speed":50}
     {"press button", press_button},                                 // {"cmd":"press button", "button": 10}
     {"fade button group", fade_button_group},                       // {"cmd":"fade button group", "buttons": [1,2,10,17], "fade": 1, "speed": 50}
     {"set button brightness", set_button_brightness},               // {"cmd":"set button brightness", "button": 5, "brightness": 20}
@@ -109,7 +105,6 @@ void getButtonState(char command[], int uart_index){
     } else if (matchesCommand(command, buttonReleaseCommands, NUM_COMMANDS)) {
         // Handle behavior for button release
         // printf("Button is released.\n");
-        //sprintf(str, "BR_%d\r\n", value);
         sprintf(str, "BR_%s\r\n",  buttonSettings[value-1].setting);
         send(uart_index, str, strlen(str));
         if(UART_TO_DEBUG == uart_index)send(3,  str, strlen(str));
@@ -239,18 +234,17 @@ int32_t init_api_socket(uint8_t sn, uint8_t *buf, uint16_t port)
 void api_socket_behaviour(uint8_t *buf, datasize_t len, char *item){
     cJSON *json = cJSON_Parse((const char *)buf);
     if (json == NULL) {
-        printf("Error parsing JSON: %s\n\n", cJSON_GetErrorPtr());
         // Handle parsing error
+        printf("Error parsing JSON: %s\n\n", cJSON_GetErrorPtr());
     } else {
         // Parse JSON object here
         cJSON *message = cJSON_GetObjectItem(json, item);
         if (message != NULL) {
-            //printf("Received item value: %s\n", message->valuestring);
-            api_command(message->valuestring, json);
             // Handle the message
+            api_command(message->valuestring, json);
         } else {
-            printf("Invalid or missing item field in JSON\n\n");
             // Handle missing or invalid field error
+            printf("Invalid or missing item field in JSON\n\n");
         }
         cJSON_Delete(json); // Free cJSON object after use
     }
@@ -297,7 +291,7 @@ void button_fade_command(cJSON *object) {
     if(fadeItem->valueint > 0){
         updateButtonStates((int*)message->valueint, false, 1);
         //fade-in with speedItem as speed value
-        printf("API fade-in button: %d and speed: %d\n\n", message->valueint, speedItem->valueint);
+        // printf("API fade-in button: %d and speed: %d\n\n", message->valueint, speedItem->valueint);
         // Gradually fade from command1 to command2
         for (int i = 0; i <= steps; i++) {
             // Interpolate values between command1 and command2
@@ -340,54 +334,6 @@ void button_fade_command(cJSON *object) {
                 break; // Exit the loop if fading should stop
             }
         }
-    }
-}
-
-// Handler function for commands like:
-// {
-//     "cmd":"cmd2", 
-//     "data":{
-//         "id":10, 
-//         "name":"test"
-//     }
-// }
-void handle_command2(cJSON *object) {
-    cJSON *dataItem = cJSON_GetObjectItem(object, "data");
-    // printf("Handling 2nd command type:\n - 1st: %d\n - 2nd: %s\n", dataItem->child->valueint, dataItem->child->next->valuestring);
-
-    if (dataItem != NULL) {
-        // Iterate over all the keys in the "data" object
-        cJSON *child = dataItem->child;
-        while (child != NULL) {
-            printf("Key: %s, Value: %s\n", child->string, cJSON_Print(child));
-            child = child->next;
-        }
-        printf("\n");
-    }else{
-        printf("Invalid or missing data item field in JSON\n\n");
-    }
-}
-
-// Handler function for commands like:
-// {
-//     "cmd":"cmd2", 
-//     "buttons": [10,2,100]
-// }
-void handle_command3(cJSON *object) {
-    cJSON *dataItem = cJSON_GetObjectItem(object, "buttons");
-    // printf("Handling 2nd command type:\n - 1st: %d\n - 2nd: %s\n", dataItem->child->valueint, dataItem->child->next->valuestring);
-
-    if (dataItem != NULL) {
-        // Iterate over the array elements
-        int array_size = cJSON_GetArraySize(dataItem);
-        printf("Array size: %d\n", array_size);
-        for (int i = 0; i < array_size; ++i) {
-            cJSON *item = cJSON_GetArrayItem(dataItem, i);
-            printf("Array element at index %d: %d\n", i, item->valueint);
-        }
-        printf("\n");
-    }else{
-        printf("Invalid or missing buttons item field in JSON\n\n");
     }
 }
 
@@ -472,7 +418,6 @@ void fade_gui(cJSON *object){
             buttonState[i] = true;
         }
     }
-        // UART_INTERRUPTED = 0;
 }
 
 //{"cmd":"fade gui", "fade":9, "speed":50}
@@ -540,7 +485,7 @@ void press_button(cJSON *object){
     char buttonHex[5];
 
     cJSON *message = cJSON_GetObjectItem(object, "button");
-    printf("API pressed button: %d\n\n", message->valueint);
+    // printf("API pressed button: %d\n\n", message->valueint);
 
     sprintf(buttonHex, "%02X", message->valueint);
     pressStr[6] = buttonHex[0];
@@ -654,14 +599,13 @@ void set_button_brightness_group(cJSON *object){
     if (dataItem != NULL) {
         // Iterate over the array elements 
         int array_size = cJSON_GetArraySize(dataItem);
-        printf("Array size: %d\n", array_size);
         for (int i = 0; i < array_size; ++i) {
             cJSON *item = cJSON_GetArrayItem(dataItem, i);
-            printf("Button: %d brightness set to: %d\n", item->valueint, brightnessItem->valueint);
+            // printf("Button: %d brightness set to: %d\n", item->valueint, brightnessItem->valueint);
         }
-        printf("\n");
+        // printf("\n");
     }else{
-        printf("Invalid or missing buttons item field in JSON\n\n");
+        // printf("Invalid or missing buttons item field in JSON\n\n");
     }
 }
 
@@ -704,14 +648,13 @@ void set_button_color_group(cJSON *object){
     if (dataItem != NULL) {
         // Iterate over the array elements
         int array_size = cJSON_GetArraySize(dataItem);
-        printf("Array size: %d\n", array_size);
         for (int i = 0; i < array_size; ++i) {
             cJSON *item = cJSON_GetArrayItem(dataItem, i);
-            printf("API gave button: %d the color: %s\n", item->valueint, colorItem->valuestring);
+            // printf("API gave button: %d the color: %s\n", item->valueint, colorItem->valuestring);
         }
-        printf("\n");
+        // printf("\n");
     }else{
-        printf("Invalid or missing buttons item field in JSON\n\n");
+        // printf("Invalid or missing buttons item field in JSON\n\n");
     }
 }
 
@@ -721,7 +664,6 @@ void play_sound(cJSON *object){
     cJSON *soundItem = cJSON_GetObjectItem(object, "sound");
     cJSON *volumeItem = cJSON_GetObjectItem(object, "volume");
     // printf("API plating sound: %d with volume: %d\n\n", soundItem->valueint, volumeItem->valueint);
-
     char soundHex[3];
     snprintf(soundHex, sizeof(soundHex), "%02X", soundItem->valueint);
 
@@ -731,18 +673,17 @@ void play_sound(cJSON *object){
     txbuf[2] = 0x0A;
     txbuf[3] = 0x03;
     txbuf[4] = 0x01;
-    sscanf(soundHex, "%hhx", &txbuf[5]);
+    sscanf(soundHex, "%hhx", &txbuf[5]); // put sound index in the correct spot of the message/command
     txbuf[6] = 0x00;
     txbuf[7] = 0x00;
     txbuf[8] = 0x01;
     txbuf[9] = 0x55;
-    // \xF0\xAA\x0A\x03\x01\x27\x00\x00\x01\x55
+
+    // transmit command over software UART 
     for(int i = 0; i < 10; i++){
         uart_transmit_command(txbuf[i]);
-        sleep_ms(5);
-        // printf("0x%02X", txbuf[i]);
+        sleep_ms(5); // gives the uart time to reset the GPIO pin
     }
-    //printf("\n");
 }
 
 // {"cmd":"set haptic intensity", "intensity": 50}
@@ -759,22 +700,26 @@ void update_system_ip(cJSON *object){
     int a, b, c, d;
     sscanf(ipItem->valuestring, "%d.%d.%d.%d", &a, &b, &c, &d);
 
+    // update ip
     g_net_info.ip[0] = a;
     g_net_info.ip[1] = b;
     g_net_info.ip[2] = c;
     g_net_info.ip[3] = d;
+    // update ip template with the new template
     ipTemplate[0] = a;
     ipTemplate[1] = b;
     ipTemplate[2] = c;
     ipTemplate[3] = d;
+    // close all sockets
     close(0);
     close(1);
     close(2);
     close(3);
     close(5);
+    // reinitialize network
     network_initialize(g_net_info);
     print_network_information(g_net_info);
-    printf("API updated ip to: %s\n\n", ipItem->valuestring);
+    // printf("API updated ip to: %s\n\n", ipItem->valuestring);
 }
 
 // {"cmd":"update system baudrate","baudrate uart 1": 38400, "baudrate uart 2": 0}
@@ -784,12 +729,12 @@ void update_system_baudrate(cJSON *object){
     cJSON *baudrateItem2 = cJSON_GetObjectItem(object, "baudrate uart 2");
     if(baudrateItem1->valueint > 0){
         uart_set_baudrate(UART0_ID, baudrateItem1->valueint);
-        printf("API updated uart 1 baudrate to: %d\n\n", baudrateItem1->valueint);
+        // printf("API updated uart 1 baudrate to: %d\n\n", baudrateItem1->valueint);
     }
 
     if(baudrateItem2->valueint > 0){
         uart_set_baudrate(UART1_ID, baudrateItem2->valueint);
-        printf("API updated uart 2 baudrate to: %d\n\n", baudrateItem2->valueint);
+        // printf("API updated uart 2 baudrate to: %d\n\n", baudrateItem2->valueint);
     }
 }
 
@@ -798,7 +743,7 @@ void update_system_baudrate(cJSON *object){
 void update_socket_inactive_timer(cJSON *object){
     cJSON *timerItem = cJSON_GetObjectItem(object, "sec");
     socketInactiveTimer = timerItem->valueint;
-    printf("API updated socket inactive disconnect timer to: %d\n\n", timerItem->valueint);
+    // printf("API updated socket inactive disconnect timer to: %d\n\n", timerItem->valueint);
 }
 
 // {"cmd":"set button function","button": 2,"function": "LightsMenu"}

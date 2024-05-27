@@ -9,14 +9,15 @@
 int received_data_index = 0;  // Index to keep track of the current position in the buffer
 char received_data_interrupt[256];  // Define a buffer to store received data
 
-int UART_INTERRUPTED = 0;
+int UART_INTERRUPTED = 0; // Global var to check if the UART got interrupted
 
 void uart_rx_interrupt() {
     uint8_t data;
     uart_inst_t *triggeredBy = NULL;
     int uart_index = 0;
 
-    if (uart_is_readable(UART0_ID)) {
+    // check which uart is receiving a message
+    if (uart_is_readable(UART0_ID)) { 
         triggeredBy = UART0_ID;
         uart_index = 0;
     }
@@ -25,15 +26,15 @@ void uart_rx_interrupt() {
         uart_index = 1;
     }
 
-        while (uart_is_readable(triggeredBy)) {
+    while (uart_is_readable(triggeredBy)) {
         char receivedChar = uart_getc(triggeredBy);
         if ((receivedChar == '\n' || receivedChar == '\r')) {
             if(received_data_index > 0){
             UART_INTERRUPTED = 1;
             received_data_interrupt[received_data_index++] = receivedChar;
             received_data_interrupt[received_data_index++] = '\n';
-            received_data_interrupt[received_data_index++] = '\0';/////////////// als niet meer werkt dit weghalen
-            getButtonState(received_data_interrupt, uart_index); //sleeps uitzetten in commands als dit aan gaat
+            received_data_interrupt[received_data_index++] = '\0';
+            getButtonState(received_data_interrupt, uart_index);
             //send(uart_index, received_data_interrupt, received_data_index);
             //if(UART_TO_DEBUG == uart_index)send(3, received_data_interrupt, received_data_index);
             }
@@ -47,6 +48,7 @@ void uart_rx_interrupt() {
     }
 }
 
+// reset the UART_INTERRUPTED var
 void reset_UART_interrupt_flag(){
     if(UART_INTERRUPTED == 1){
         if (!uart_is_readable(UART0_ID)) {
@@ -144,7 +146,6 @@ void software_UART_send_byte(uint8_t gpio_pin, uint8_t byte) {
 
     //Stop bit
     software_UART_send_bit(gpio_pin, 1);
-
     sleep_us(BAUD_RATE_TIMING);  //Timing with bautrate 1/bautrate * 1000000
 }
 
@@ -171,15 +172,10 @@ void UART_receiveData(uart_inst_t *uart, char socket_to_debug) {
         char receivedChar = uart_getc(uart);
         if ((receivedChar == '\n' || receivedChar == '\r')) {
             if(data_index > 0){
-            //received_data[data_index++] = '\n'; // Add '\n' and '\r' at the end of the string
             received_data[data_index++] = receivedChar;
             received_data[data_index++] = '\n';
-            // received_data[data_index] = '\n';
-            // received_data[data_index++] = '\r';
-            // received_data[data_index++] = '\0'; // null-terminate string
-            // printf("Received Data: %s on Uart%d\n", received_data, uart_index);
-            send(uart_index, received_data, data_index);
-            if(socket_to_debug == uart_index)send(3, received_data, data_index);
+            send(uart_index, received_data, data_index);                        // send uart data to the connected socket
+            if(socket_to_debug == uart_index)send(3, received_data, data_index);// send uart data to the debug socket if needed
             }
             data_index = 0;  //Reset
         } else {
@@ -249,7 +245,6 @@ void software_uart_read_string(uint8_t gpio_pin, char *buffer, size_t buffer_siz
             index++;
         }
     }
-
         // for (size_t i = 0; received_data2[i] != '\0'; i++) {
         //     printf("%c ", received_data2[i]);
         // }

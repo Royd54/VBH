@@ -17,8 +17,6 @@
 #include <time.h>
 
 #include "tcp_api.c"
-// #include "tcp_server.c"
-// #include "UART_Communication.c"
 
 #include "hardware/uart.h"
 #include "hardware/irq.h"
@@ -195,30 +193,6 @@ int main()
     /* Infinite loop */
     while (1)
     {
-        // const char* data_uart0 = "Hello, UART0!\n";
-        // hardware_UART_send_data(UART0_ID, data_uart0);
-
-        // const char* data_uart1 = "Hi, UART1!\n";
-        // hardware_UART_send_data(UART1_ID, data_uart1);
-
-        //Send data for software uart
-        //software_UART_send_string(SOFTWARE_TX_PIN, "0xF00xAA0x0A0x030x010x270x000x000x010x55");
-        // for(int i = 0; i < 10; i++){
-        //     uart_transmit_command(txbuf[i]);
-        //     sleep_ms(5);
-        // }
-        // sleep_ms(1000);
-
-        // software_uart_read_string(SOFTWARE_RX_PIN, received_data2, sizeof(received_data2));
-        // printf("SoftwareRX: %s\n", received_data2);
-        // sleep_ms(100);
-
-        // UART_receiveData(UART0_ID, socket_to_debug);
-        // sleep_ms(50); 
-
-        // UART_receiveData(UART1_ID, socket_to_debug);
-        // sleep_ms(50); 
-
         socket_behaviour(SOCKET1_TCP_SERVER, PORT1_TCP_SERVER, &messageReceivedTimer1);
         socket_behaviour(SOCKET2_TCP_SERVER, PORT2_TCP_SERVER, &messageReceivedTimer2);
         socket_behaviour(SOCKET3_TCP_SERVER, PORT3_TCP_SERVER, &messageReceivedTimer3);

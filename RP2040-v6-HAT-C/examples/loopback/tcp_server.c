@@ -189,28 +189,28 @@ void print_debug_console(char message[])
     for (const char *ptr = message; *ptr != '\0'; ++ptr) //Check if the end of the message has been reached
     {
         uint8_t value = (uint8_t)(*ptr);
-        send(3, &value, sizeof(value));
+        send(3, &value, sizeof(value)); //Copy message to the debug socket
     }
 }
 
 // Function that handles the interaction for the timer menu (check input and assign the input to the timer)
 void change_disconnect_timer_menu()
 {
-    printf("Enter time in seconds: ");
+    // printf("Enter time in seconds: ");
     unsigned int combinedNumber = 0;
     settingsInput();
 
     // Check 2 characters
     for (int i = 0; i < 2; ++i) {
         if (tempBuffer[i] >= '0' && tempBuffer[i] <= '9') combinedNumber = combinedNumber * 10 + (tempBuffer[i] - '0'); // Check for digits and combine/convert to int
-        else { print_debug_console("\r\n  \x1B[31m [Non-digit character detected]\x1B[0m\r\n"); printf("\n\rNon-digit character detected \n\r"); return;}
+        else { print_debug_console("\r\n  \x1B[31m [Non-digit character detected]\x1B[0m\r\n"); /*printf("\n\rNon-digit character detected \n\r");*/ return;}
     }
 
     buffer[0] = tempBuffer[0];
     buffer[1] = tempBuffer[1];
 
     // Print out new timer
-    printf("Timer set to: %u", combinedNumber);
+    // printf("Timer set to: %u", combinedNumber);
     print_debug_console("Timer Set to: ");
     uint8_t *new_buf = malloc(sizeof(tempBuffer) + 2);
     memcpy(new_buf, tempBuffer, sizeof(tempBuffer));
@@ -230,7 +230,7 @@ void change_disconnect_timer_menu()
 // Function that handles the interaction within the bautrate menu (type and save new bautrate)
 void change_baudrate_menu()
 {
-    printf("Enter a Bautrate: ");
+    // printf("Enter a Bautrate: ");
     unsigned int combinedNumber = 0;
     settingsInput();
 
@@ -249,7 +249,7 @@ void change_baudrate_menu()
             }
 
             // Print new bautrate
-            printf("Bautrate set to: %u", combinedNumber);
+            // printf("Bautrate set to: %u", combinedNumber);
             print_debug_console("Bautrate Set to: ");
             uint8_t *new_buf = malloc(sizeof(tempBuffer) + 2);
             memcpy(new_buf, tempBuffer, sizeof(tempBuffer));
@@ -269,7 +269,7 @@ void change_baudrate_menu()
     }
     // Print error message
     print_debug_console("\r\n  \x1B[31m [Bautrate is not recognised]\x1B[0m\r\n"); 
-    printf("\n\rBautrate is not recognised \n\r"); 
+    // printf("\n\rBautrate is not recognised \n\r"); 
 }
 
 //function for retrieving user input and check if the enter key is pressed
@@ -294,7 +294,7 @@ void settingsInput(){
 //Get input from user to change networking settings
 void change_ip_menu()
 {
-    printf("Enter an IP address: ");
+    // printf("Enter an IP address: ");
     settingsInput(); //get user input
 
     //combine ip characters
@@ -310,7 +310,7 @@ void change_ip_menu()
         //Check if template is met or if the combined char is in the range
         if((buffer[i] != tempIpTemplate[i]) || (combineChars(tempBuffer[8], tempBuffer[9], tempBuffer[10]) > 255) || (combineChars(tempBuffer[12], tempBuffer[13], tempBuffer[14]) > 255)) { 
             print_debug_console("\r\n  \x1B[31m [Ip not in range]\x1B[0m\r\n"); 
-            printf("\n\rIp not in range \n\r"); 
+            // printf("\n\rIp not in range \n\r"); 
             return;
         }
     }
@@ -350,16 +350,6 @@ unsigned int combineChars(char char1, char char2, char char3) {
 void transmitHexCommand(uint8_t *buf){
     uint8_t txbuf[27]; //27 is the max command length of the audio board protocol
     int stop_index = -1;
-    // // Loop trough max size of the command buffer (size indicates number of hex values)
-    // for (int i = 0; i < 27; i++) {
-    //     sscanf(buf + (i * 2), "%2hhx", &txbuf[i]); // Convert each pair of hexadecimal characters to uint8_t
-    //     if(txbuf[i] == 85) stop_index = i; continue;// Check if 0x55 is seen (this is the end bit for the audio board's protocol)
-    // }
-
-    // //Print the converted values with the "0x" format for verification
-    // for (int i = 0; i < stop_index + 1; i++) {
-    //     printf("txbuf[%d] = 0x%02X\n", i, txbuf[i]);
-    // }
 
     // Loop trough max size of the command buffer (size indicates number of hex values)
     for (int i = 0; i < 27; i++) {
@@ -369,11 +359,6 @@ void transmitHexCommand(uint8_t *buf){
             break; // Stop if 0x55 is found
         }
     }
-
-    // //Print the converted values with the "0x" format for verification
-    // for (int i = 0; i < stop_index + 1; i++) {
-    //     printf("txbuf[%d] = 0x%02X\n", i, txbuf[i]);
-    // }
 
     // Transmit hex command to audio board
     for(int i = 0; i < stop_index + 1; i++){
