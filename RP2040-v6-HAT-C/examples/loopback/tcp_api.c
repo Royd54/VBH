@@ -1,40 +1,17 @@
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <hardware/watchdog.h>
 #include "socket.h"
 #include "../libraries/cJSON/cJSON.h"
-#include "tcp_server.c"
+#include "tcp_server.h"
 #include "tcp_api.h"
-#include <stdbool.h>
-#include <string.h>
+#include "UART_Communication.h"
+#include "w6x00_spi.h"
 
 #define NUM_BUTTONS 18
 #define NUM_COMMANDS 17
 #define DATA_BUF_SIZE 2048 // Max size of the data buffer
-
-void api_socket_behaviour(uint8_t *buf, datasize_t len, char *item);
-void api_command(const char *command, cJSON *object);
-void handle_unknown_command();
-void button_fade_command(cJSON *object);
-void fade_gui(cJSON *object);
-void fade_menu(cJSON *object);
-void press_button(cJSON *object);
-void fade_button_group(cJSON *object);
-void set_button_brightness(cJSON *object);
-void set_button_brightness_group(cJSON *object);
-void system_restart(cJSON *object);
-void disconnect_socket(cJSON *object);
-void calibrate_buttons(cJSON *object);
-void set_button_color(cJSON *object);
-void set_button_color_group(cJSON *object);
-void play_sound(cJSON *object);
-void set_haptic_intensity(cJSON *object);
-void update_system_ip(cJSON *object);
-void update_system_baudrate(cJSON *object);
-void update_socket_inactive_timer(cJSON *object);
-void set_button_function(cJSON *object);
-
-void updateButtonStates(int buttons[], bool state, int buttonAmount);
-// void getButtonState(char command[]);
-void setButtonActivity();
-void playSoundEffect(int sound, int volume);
 
 // Define the state of each button
 bool buttonState[NUM_BUTTONS] = {false};
@@ -46,16 +23,7 @@ char *buttonPressCommands[] = {"<$061301FF", "<$061302FF","<$061303FF", "<$06130
 char *buttonBehaviour[] = {"LightsDay", "LightsNight", "LightsMoody", "LightsOff","LightsMenu","Thermostat","Up","Call","Curtains","Down","MusicMenu","MusicBack","MusicPlay","MusicPause","MusicForward","Power","V"};
 
 // Struct for applying settings/functions to the buttons.
-typedef struct {
-    char setting[20];
-} ButtonSettings;
-ButtonSettings buttonSettings[NUM_BUTTONS]; // Array index (+1) corresponds with physical button index (button [0] is physical 1)
-
-// Structure to represent a command and its handler function
-typedef struct {
-    const char *command_name;
-    void (*handler)();
-} CommandHandler;
+ButtonSettings buttonSettings[NUM_BUTTONS];
 
 // Array of command handlers
 CommandHandler command_handlers[] = {

@@ -1,12 +1,15 @@
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
-#include "socket.h"
 #include <hardware/flash.h>
 #include <hardware/sync.h>
-#include "port_common.h"
-#include "pico/stdlib.h"
 #include <hardware/watchdog.h>
 #include <ctype.h>
-#include "UART_Communication.c"
+#include <sys/types.h>
+#include "port_common.h"
+#include "pico/stdlib.h"
+#include "UART_Communication.h"
+#include "tcp_server.h"
 
 #define DATA_BUF_SIZE 2048 //Max size of the data buffer
 #define DEBUG_SOCKET_TCP_SERVER 3 //Socket that functions as a debug socket
@@ -19,22 +22,6 @@ unsigned char tempBuffer[SIZE];
 unsigned int ipTemplate[] = {169, 254, 93, 240};
 
 int socketInactiveTimer = 40; //Time that needs tot be reached in order to disconnect a client
-
-unsigned int combineChars(char char1, char char2, char char3);
-char* combineIntegersToString(int num1, int num2, int num3, int num4);
-char* intToString(int num);
-void mainMenu(uint8_t *buf, datasize_t len);
-void networkingMenu(uint8_t *buf, datasize_t len); 
-void applicationMenu(uint8_t *buf, datasize_t len);
-void monitoringMenu(uint8_t *buf, datasize_t len, uint8_t owning_socket);
-void printMenus(int index);
-void settingsInput(void);
-void print_debug_console(char message[]); 
-int32_t init_server_socket(uint8_t sn, uint8_t* buf, uint16_t port);
-void debug_socket_behaviour(uint8_t *buf, datasize_t len, uint8_t owning_socket);
-void copyToSerial(uint8_t *buf, datasize_t len, uint8_t owning_socket);
-void transmitHexCommand(uint8_t *buf);
-
 int menuIndex = 0;
 char socket_to_debug = 4; //Set to 4 for defaulting to no socket to debug
 char lastChar = 0;  
