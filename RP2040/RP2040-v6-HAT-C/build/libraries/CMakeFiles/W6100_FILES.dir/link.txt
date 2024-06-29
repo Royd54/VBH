@@ -1,2 +1,0 @@
-C:\msys64\ucrt64\bin\ar.exe qc libW6100_FILES.a CMakeFiles/W6100_FILES.dir/io6Library/Ethernet/W6100/w6100.c.obj CMakeFiles/W6100_FILES.dir/io6Library/Ethernet/socket.c.obj CMakeFiles/W6100_FILES.dir/io6Library/Ethernet/wizchip_conf.c.obj
-C:\msys64\ucrt64\bin\ranlib.exe libW6100_FILES.a

@@ -1,5 +1,0 @@
-D:/RP2040/RP2040-v6-HAT-C/build/elf2uf2/CMakeFiles/elf2uf2.dir
-D:/RP2040/RP2040-v6-HAT-C/build/elf2uf2/CMakeFiles/edit_cache.dir
-D:/RP2040/RP2040-v6-HAT-C/build/elf2uf2/CMakeFiles/rebuild_cache.dir
-D:/RP2040/RP2040-v6-HAT-C/build/elf2uf2/boot_uf2_headers/CMakeFiles/edit_cache.dir
-D:/RP2040/RP2040-v6-HAT-C/build/elf2uf2/boot_uf2_headers/CMakeFiles/rebuild_cache.dir

@@ -1,0 +1,13 @@
+# Target labels
+ PioasmBuild
+# Source files and their labels
+D:/VBH/dev/RP2040-v6-HAT-C/build/pico-sdk/src/rp2_common/cyw43_driver/CMakeFiles/PioasmBuild
+D:/VBH/dev/RP2040-v6-HAT-C/build/pico-sdk/src/rp2_common/cyw43_driver/CMakeFiles/PioasmBuild.rule
+D:/VBH/dev/RP2040-v6-HAT-C/build/pico-sdk/src/rp2_common/cyw43_driver/CMakeFiles/PioasmBuild-complete.rule
+D:/VBH/dev/RP2040-v6-HAT-C/build/pico-sdk/src/rp2_common/cyw43_driver/pioasm/src/PioasmBuild-stamp/PioasmBuild-build.rule
+D:/VBH/dev/RP2040-v6-HAT-C/build/pico-sdk/src/rp2_common/cyw43_driver/pioasm/src/PioasmBuild-stamp/PioasmBuild-configure.rule
+D:/VBH/dev/RP2040-v6-HAT-C/build/pico-sdk/src/rp2_common/cyw43_driver/pioasm/src/PioasmBuild-stamp/PioasmBuild-download.rule
+D:/VBH/dev/RP2040-v6-HAT-C/build/pico-sdk/src/rp2_common/cyw43_driver/pioasm/src/PioasmBuild-stamp/PioasmBuild-install.rule
+D:/VBH/dev/RP2040-v6-HAT-C/build/pico-sdk/src/rp2_common/cyw43_driver/pioasm/src/PioasmBuild-stamp/PioasmBuild-mkdir.rule
+D:/VBH/dev/RP2040-v6-HAT-C/build/pico-sdk/src/rp2_common/cyw43_driver/pioasm/src/PioasmBuild-stamp/PioasmBuild-patch.rule
+D:/VBH/dev/RP2040-v6-HAT-C/build/pico-sdk/src/rp2_common/cyw43_driver/pioasm/src/PioasmBuild-stamp/PioasmBuild-update.rule
