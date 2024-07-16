@@ -2,9 +2,6 @@ set(TARGET_NAME w6x00_loopback)
 
 add_executable(${TARGET_NAME}
         ${TARGET_NAME}.c
-        tcp_api.c
-        tcp_server.c
-        UART_Communication.c
         )
 
 target_link_libraries(${TARGET_NAME} PRIVATE

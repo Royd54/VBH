@@ -16,9 +16,7 @@
 #include <hardware/sync.h>
 #include <time.h>
 
-#include "tcp_api.h"
-#include "tcp_server.h"
-#include "UART_Communication.h"
+#include "tcp_api.c"
 
 #include "hardware/uart.h"
 #include "hardware/irq.h"
@@ -43,6 +41,10 @@
 #define API_PORT_TCP_SERVER 8080
 
 #define RETRY_CNT   10000
+
+uint8_t tcp_client_destip[] = {
+    169, 254, 93, 240
+};
 
 /* Loopback */
 static uint8_t g_tcp_server_buf[ETHERNET_BUF_MAX_SIZE] = {
