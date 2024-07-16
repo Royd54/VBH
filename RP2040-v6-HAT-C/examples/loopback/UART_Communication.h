@@ -8,10 +8,10 @@
 #define BAUD_RATE 38400
 
 // Used for instantiating hardware uart (saving baudrate settings)
-unsigned int BAUD_RATE_SET = 38400;
+extern unsigned int BAUD_RATE_SET;
 
 // Used to check if the data on uart needs to be debugged to a debug socket
-unsigned int UART_TO_DEBUG;
+extern unsigned int UART_TO_DEBUG;
 
 //Timing calculated by 1/BAUD_RATE*1000000 for waiting the correct amount of time(in microseconds) according to the baudrate 
 //Used for software uart
@@ -47,5 +47,16 @@ extern void software_UART_send_bit(uint8_t gpio_pin, uint8_t bit);
 extern void software_UART_send_byte(uint8_t gpio_pin, uint8_t byte);
 extern void software_UART_send_string(uint8_t gpio_pin, const char *str);
 extern void uart_transmit_command(uint8_t data);
+extern void reset_UART_interrupt_flag();
+extern uint8_t uart_receive_command();
+extern char software_uart_read(uint8_t gpio_pin);
+extern void software_uart_read_string(uint8_t gpio_pin, char *buffer, size_t buffer_size);
+void uart_rx_interrupt();
+void delay_us(uint32_t us);
+void delay_us_busy_waiting(uint32_t us);
+
+extern int received_data_index;
+extern char received_data_interrupt[];
+extern int UART_INTERRUPTED;
 
 #endif
