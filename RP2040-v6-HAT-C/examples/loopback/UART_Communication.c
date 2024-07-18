@@ -3,13 +3,14 @@
 #include "UART_Communication.h"
 #include "socket.h"
 #include "stdint-gcc.h"
-
 #include "tcp_api.h"
 
-int received_data_index = 0;  // Index to keep track of the current position in the buffer
+int received_data_index = 0;        // Index to keep track of the current position in the buffer
 char received_data_interrupt[256];  // Define a buffer to store received data
+int UART_INTERRUPTED = 0;           // Global var to check if the UART got interrupted
 
-int UART_INTERRUPTED = 0; // Global var to check if the UART got interrupted
+unsigned int BAUD_RATE_SET = 38400;
+unsigned int UART_TO_DEBUG;
 
 void uart_rx_interrupt() {
     uint8_t data;
