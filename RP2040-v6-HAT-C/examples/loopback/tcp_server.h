@@ -28,11 +28,40 @@ void monitoringMenu(uint8_t *buf, datasize_t len, uint8_t owning_socket);
 void printMenus(int index);
 void settingsInput(void);
 void print_debug_console(char message[]); 
-extern int32_t init_server_socket(uint8_t sn, uint8_t* buf, uint16_t port);
+int32_t init_server_socket(uint8_t sn, uint8_t* buf, uint16_t port);
 void debug_socket_behaviour(uint8_t *buf, datasize_t len, uint8_t owning_socket);
 void copyToSerial(uint8_t *buf, datasize_t len, uint8_t owning_socket);
+void copyToCan(uint8_t *buf, uint8_t receiverID, datasize_t len);
 void transmitHexCommand(uint8_t *buf);
 
 /* Network */
-static wiz_NetInfo g_net_info;
+static wiz_NetInfo g_net_info =
+    {
+        .mac = {0x00, 0x08, 0xDC, 0x12, 0x34, 0x56}, // MAC address
+        .ip = {10, 12, 99, 215},                     // IP address 169, 254, 93, 240
+        .sn = {255, 255, 0, 0},                      // Subnet Mask
+        .gw = {169, 254, 93, 220},                   // Gateway
+        .dns = {8, 8, 8, 8},                         // DNS server
+        .lla = {0xfe, 0x80, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00,
+                0x02, 0x08, 0xdc, 0xff,
+                0xfe, 0x57, 0x57, 0x25},             // Link Local Address
+        .gua = {0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00},             // Global Unicast Address
+        .sn6 = {0xff, 0xff, 0xff, 0xff,
+                0xff, 0xff, 0xff, 0xff,
+                0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00},             // IPv6 Prefix
+        .gw6 = {0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00},             // Gateway IPv6 Address
+        .dns6 = {0x20, 0x01, 0x48, 0x60,
+                0x48, 0x60, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x88, 0x88},             // DNS6 server
+        .ipmode = NETINFO_STATIC_ALL
+};
 #endif

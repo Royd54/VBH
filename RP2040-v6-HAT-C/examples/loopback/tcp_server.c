@@ -28,35 +28,35 @@ char lastChar = 0;
 
 #if LOOPBACK_MODE == LOOPBACK_MAIN_NOBLCOK
 /* Network */
-static wiz_NetInfo g_net_info =
-    {
-        .mac = {0x00, 0x08, 0xDC, 0x12, 0x34, 0x56}, // MAC address
-        .ip = {10, 12, 99, 215},                   // IP address 169, 254, 93, 240
-        .sn = {255, 255, 0, 0},                      // Subnet Mask
-        .gw = {169, 254, 93, 220},                   // Gateway
-        .dns = {8, 8, 8, 8},                         // DNS server
-        .lla = {0xfe, 0x80, 0x00, 0x00,
-                0x00, 0x00, 0x00, 0x00,
-                0x02, 0x08, 0xdc, 0xff,
-                0xfe, 0x57, 0x57, 0x25},             // Link Local Address
-        .gua = {0x00, 0x00, 0x00, 0x00,
-                0x00, 0x00, 0x00, 0x00,
-                0x00, 0x00, 0x00, 0x00,
-                0x00, 0x00, 0x00, 0x00},             // Global Unicast Address
-        .sn6 = {0xff, 0xff, 0xff, 0xff,
-                0xff, 0xff, 0xff, 0xff,
-                0x00, 0x00, 0x00, 0x00,
-                0x00, 0x00, 0x00, 0x00},             // IPv6 Prefix
-        .gw6 = {0x00, 0x00, 0x00, 0x00,
-                0x00, 0x00, 0x00, 0x00,
-                0x00, 0x00, 0x00, 0x00,
-                0x00, 0x00, 0x00, 0x00},             // Gateway IPv6 Address
-        .dns6 = {0x20, 0x01, 0x48, 0x60,
-                0x48, 0x60, 0x00, 0x00,
-                0x00, 0x00, 0x00, 0x00,
-                0x00, 0x00, 0x88, 0x88},             // DNS6 server
-        .ipmode = NETINFO_STATIC_ALL
-};
+// static wiz_NetInfo g_net_info =
+//     {
+//         .mac = {0x00, 0x08, 0xDC, 0x12, 0x34, 0x56}, // MAC address
+//         .ip = {10, 12, 99, 215},                   // IP address 169, 254, 93, 240
+//         .sn = {255, 255, 0, 0},                      // Subnet Mask
+//         .gw = {169, 254, 93, 220},                   // Gateway
+//         .dns = {8, 8, 8, 8},                         // DNS server
+//         .lla = {0xfe, 0x80, 0x00, 0x00,
+//                 0x00, 0x00, 0x00, 0x00,
+//                 0x02, 0x08, 0xdc, 0xff,
+//                 0xfe, 0x57, 0x57, 0x25},             // Link Local Address
+//         .gua = {0x00, 0x00, 0x00, 0x00,
+//                 0x00, 0x00, 0x00, 0x00,
+//                 0x00, 0x00, 0x00, 0x00,
+//                 0x00, 0x00, 0x00, 0x00},             // Global Unicast Address
+//         .sn6 = {0xff, 0xff, 0xff, 0xff,
+//                 0xff, 0xff, 0xff, 0xff,
+//                 0x00, 0x00, 0x00, 0x00,
+//                 0x00, 0x00, 0x00, 0x00},             // IPv6 Prefix
+//         .gw6 = {0x00, 0x00, 0x00, 0x00,
+//                 0x00, 0x00, 0x00, 0x00,
+//                 0x00, 0x00, 0x00, 0x00,
+//                 0x00, 0x00, 0x00, 0x00},             // Gateway IPv6 Address
+//         .dns6 = {0x20, 0x01, 0x48, 0x60,
+//                 0x48, 0x60, 0x00, 0x00,
+//                 0x00, 0x00, 0x00, 0x00,
+//                 0x00, 0x00, 0x88, 0x88},             // DNS6 server
+//         .ipmode = NETINFO_STATIC_ALL
+// };
 
 //Initialize server socket 
 int32_t init_server_socket(uint8_t sn, uint8_t *buf, uint16_t port)
@@ -394,7 +394,6 @@ void hexToTelnet(uint8_t *buf){
     send(3, result, formatted_length);
     // send(3, assignTelnetSuffix(result, formatted_length), formatted_length+2); use this if the commands dont contain \r\n
     // send(3, buf, 16);
-
 }
 
 //function for checking wich menu behaviour needs to be used
@@ -431,9 +430,11 @@ void debug_socket_behaviour(uint8_t *buf, datasize_t len, uint8_t owning_socket)
         // Check if the incomming message is a HEX command that needs to be formatted for telnet
         if(owning_socket != AUDIO_SOCKET_TCP_SERVER){ send(3, assignTelnetSuffix(buf, len), len+2);}
         else hexToTelnet(buf);
-    }   
+    }
+
     UART_TO_DEBUG = socket_to_debug; // copy socket to debug over to the UART_Communication class
     copyToSerial(buf, len, owning_socket);
+    copyToCan(buf, 10, 8);
 }
 
 //function for sending the TCP data to the linked UART
@@ -441,6 +442,10 @@ void copyToSerial(uint8_t *buf, datasize_t len, uint8_t owning_socket){
     const char* data_uart = buf;
     if(owning_socket == 0)hardware_UART_send_data(UART0_ID, buf);
     if(owning_socket == 1)hardware_UART_send_data(UART1_ID, buf);
+}
+
+void copyToCan(uint8_t *buf, uint8_t receiverID, datasize_t len){
+    can_send_message_buffer(buf, receiverID, len);
 }
 
 //function for checking wich menu needs to be shown on the screen (Telnet)

@@ -8,10 +8,12 @@
 #include "tcp_api.h"
 #include "UART_Communication.h"
 #include "w6x00_spi.h"
+#include "spi_master.c"
 
 #define NUM_BUTTONS 18
 #define NUM_COMMANDS 17
 #define DATA_BUF_SIZE 2048 // Max size of the data buffer
+#define NAME_SIZE 50
 
 // Define the state of each button
 bool buttonState[NUM_BUTTONS] = {false};
@@ -29,7 +31,7 @@ ButtonSettings buttonSettings[NUM_BUTTONS];
 CommandHandler command_handlers[] = {
     {"button fade", button_fade_command},                           // {"cmd":"button fade", "fade":9, "speed":50, "button":1}
     {"fade gui", fade_gui},                                         // {"cmd":"fade gui", "fade":9, "speed":50}
-    // {"fade menu", fade_menu},                                       // {"cmd":"fade menu", "fade":9, "speed":50}
+    // {"fade menu", fade_menu},                                    // {"cmd":"fade menu", "fade":9, "speed":50}
     {"press button", press_button},                                 // {"cmd":"press button", "button": 10}
     {"fade button group", fade_button_group},                       // {"cmd":"fade button group", "buttons": [1,2,10,17], "fade": 1, "speed": 50}
     {"set button brightness", set_button_brightness},               // {"cmd":"set button brightness", "button": 5, "brightness": 20}
@@ -47,6 +49,95 @@ CommandHandler command_handlers[] = {
     {"set button function", set_button_function},                   // {"cmd":"set button function","button": 2,"function": "LightsMenu"}
     // Add more commands as needed
 };
+
+
+///////////////////////////////
+////////////////////////////////
+//////////////////////////////
+///////////////////////////////
+////////////////////////////////
+//////////////////////////////
+// typedef struct {
+//     char name[NAME_SIZE];
+//     char panelType[NAME_SIZE];
+//     int sfx_volume;
+//     int max_brightness;
+//     int time_out;
+//     int radar_enable_delay;
+//     int number_of_knocks;
+//     uint16_t radar_sensor;
+//     uint16_t sfx_actuator;
+//     uint16_t knock_sensor;
+//     uint16_t module_A;
+//     uint16_t module_B;
+//     uint16_t module_C;
+// } PanelSettings;
+
+PanelSettings* retrieved = NULL;
+
+PanelSettings* createPanelSettings(
+    const char* name, const char* panelType, int sfx_volume, int max_brightness,
+    int time_out, int radar_enable_delay, int number_of_knocks,
+    uint16_t radar_sensor, uint16_t sfx_actuator, uint16_t knock_sensor,
+    uint16_t module_A, uint16_t module_B, uint16_t module_C
+) {
+    PanelSettings* new_settings = (PanelSettings*)malloc(sizeof(PanelSettings));
+    if (new_settings == NULL) {
+        printf("Memory allocation failed\n");
+        exit(1);
+    }
+    strncpy(new_settings->name, name, NAME_SIZE - 1);
+    new_settings->name[NAME_SIZE - 1] = '\0'; // Ensure null termination
+    strncpy(new_settings->panelType, panelType, NAME_SIZE - 1);
+    new_settings->panelType[NAME_SIZE - 1] = '\0'; // Ensure null termination
+    new_settings->sfx_volume = sfx_volume;
+    new_settings->max_brightness = max_brightness;
+    new_settings->time_out = time_out;
+    new_settings->radar_enable_delay = radar_enable_delay;
+    new_settings->number_of_knocks = number_of_knocks;
+    new_settings->radar_sensor = radar_sensor;
+    new_settings->sfx_actuator = sfx_actuator;
+    new_settings->knock_sensor = knock_sensor;
+    new_settings->module_A = module_A;
+    new_settings->module_B = module_B;
+    new_settings->module_C = module_C;
+    return new_settings;
+}
+
+// typedef struct Node {
+//     PanelSettings* settings;
+//     struct Node* next;
+// } Node;
+
+Node* head = NULL;
+
+void addPanelSettings(Node** head, PanelSettings* settings) {
+    Node* new_node = (Node*)malloc(sizeof(Node));
+    if (new_node == NULL) {
+        printf("Memory allocation failed\n");
+        exit(1);
+    }
+    new_node->settings = settings;
+    new_node->next = *head;
+    *head = new_node;
+}
+
+PanelSettings* getPanelSettings(Node* head, const char* name) {
+    Node* current = head;
+    while (current != NULL) {
+        if (strncmp(current->settings->name, name, NAME_SIZE) == 0) {
+            return current->settings;
+        }
+        current = current->next;
+    }
+    return NULL; // Not found
+}
+///////////////////////////////
+////////////////////////////////
+//////////////////////////////
+///////////////////////////////
+////////////////////////////////
+//////////////////////////////
 
 // Function to check if a command matches any element in the given array
 int matchesCommand(char *command, char *commands[], int numCommands) {
@@ -136,7 +227,8 @@ int32_t init_api_socket(uint8_t sn, uint8_t *buf, uint16_t port)
 
             while (received_size != sentsize)
             {
-                api_socket_behaviour(buf + sentsize, received_size - sentsize, "cmd");
+                // api_socket_behaviour(buf + sentsize, received_size - sentsize, "cmd");
+                api_socket_behaviour_Settings(buf + sentsize, received_size - sentsize, "alchimia");
                 if (ret < 0)
                 {
                     close(sn);
@@ -164,7 +256,8 @@ int32_t init_api_socket(uint8_t sn, uint8_t *buf, uint16_t port)
 
             while (received_size != sentsize)
             {
-                api_socket_behaviour(buf + sentsize, received_size - sentsize, "cmd");
+                // api_socket_behaviour(buf + sentsize, received_size - sentsize, "cmd");
+                api_socket_behaviour_Settings(buf + sentsize, received_size - sentsize, "alchimia");
                 if (ret < 0)
                 {
                     close(sn);
@@ -216,6 +309,64 @@ void api_socket_behaviour(uint8_t *buf, datasize_t len, char *item){
         }
         cJSON_Delete(json); // Free cJSON object after use
     }
+}
+
+void api_socket_behaviour_Settings(uint8_t *buf, size_t len, char *item){
+    cJSON *json = cJSON_Parse((const char *)buf);
+    if (json == NULL) {
+        // Handle parsing error
+        printf("Error parsing JSON: %s\n\n", cJSON_GetErrorPtr());
+    } else {
+        // Parse JSON object here
+        cJSON *alchimia = cJSON_GetObjectItem(json, "alchimia");
+        if (alchimia != NULL) {
+            cJSON *control_elements = cJSON_GetObjectItem(alchimia, "control_elements");
+            if (control_elements != NULL) {
+                cJSON *hw_config = cJSON_GetObjectItem(control_elements, "hw_config");
+                if (hw_config != NULL) {
+                    cJSON *child = hw_config->child;
+                    while (child != NULL) {
+                        printf("Found object: %s\n", child->string);
+                        updatePanelConfig(child);
+                        child = child->next;
+                    }
+                    retrieved = getPanelSettings(head, "PanelWall");
+                    printf("name: %s, panelType: %s, sfx_volume: %d, max_brightness: %d, time_out: %d, radar_enable_delay: %d, number_of_knocks: %d, radar_sensor: %u, sfx_actuator: %u, knock_sensor: %u, module_A: %u, module_B: %u, module_C: %u\n",
+               retrieved->name, retrieved->panelType, retrieved->sfx_volume, retrieved->max_brightness, retrieved->time_out, retrieved->radar_enable_delay, retrieved->number_of_knocks, retrieved->radar_sensor, retrieved->sfx_actuator, retrieved->knock_sensor, retrieved->module_A, retrieved->module_B, retrieved->module_C);
+               retrieved = getPanelSettings(head, "PanelTable");
+               printf("name: %s, panelType: %s, sfx_volume: %d, max_brightness: %d, time_out: %d, radar_enable_delay: %d, number_of_knocks: %d, radar_sensor: %u, sfx_actuator: %u, knock_sensor: %u, module_A: %u, module_B: %u, module_C: %u\n",
+               retrieved->name, retrieved->panelType, retrieved->sfx_volume, retrieved->max_brightness, retrieved->time_out, retrieved->radar_enable_delay, retrieved->number_of_knocks, retrieved->radar_sensor, retrieved->sfx_actuator, retrieved->knock_sensor, retrieved->module_A, retrieved->module_B, retrieved->module_C);
+                } else {
+                    printf("hw_config object not found\n");
+                }
+            } else {
+                printf("control_elements object not found\n");
+            }
+        } else {
+            printf("alchimia object not found\n");
+        }
+        cJSON_Delete(json); // Free cJSON object after use
+    }
+}
+
+void updatePanelConfig(cJSON *object) {
+    cJSON *panelName = cJSON_GetObjectItem(object, "name");
+    cJSON *panelType = cJSON_GetObjectItem(object, "type");
+    cJSON *sfx_volume = cJSON_GetObjectItem(object, "sfx_volume");
+    cJSON *max_brightness = cJSON_GetObjectItem(object, "max_brightness");
+    cJSON *time_out = cJSON_GetObjectItem(object, "time_out");
+    cJSON *radar_enable_delay = cJSON_GetObjectItem(object, "radar_enable_delay");
+    cJSON *number_of_knocks = cJSON_GetObjectItem(object, "number_of_knocks");
+    cJSON *radar_sensor = cJSON_GetObjectItem(object, "radar_sensor");
+    cJSON *sfx_actuator = cJSON_GetObjectItem(object, "sfx_actuator");
+    cJSON *knock_sensor = cJSON_GetObjectItem(object, "knock_sensor");
+    cJSON *module_A = cJSON_GetObjectItem(object, "module_A");
+    cJSON *module_B = cJSON_GetObjectItem(object, "module_B");
+    cJSON *module_C = cJSON_GetObjectItem(object, "module_C");
+    addPanelSettings(&head, createPanelSettings(
+    panelName->valuestring, panelType->valuestring, sfx_volume->valueint, max_brightness->valueint, time_out->valueint,
+    radar_enable_delay->valueint, number_of_knocks->valueint,
+    radar_sensor->valueint, sfx_actuator->valueint, knock_sensor->valueint, module_A->valueint, module_B->valueint, module_C->valueint));
 }
 
 // Function to handle the API command
@@ -578,11 +729,11 @@ void set_button_brightness_group(cJSON *object){
 }
 
 // {"cmd":"restart system"}
-// Restart system
+// Restart system 
 void system_restart(cJSON *object){
     printf("API restarting system \n\n");
     sleep_ms(2000);
-    watchdog_enable(1, 1);
+    watchdog_enable(1, 1); 
 }
 
 // {"cmd":"disconnect socket", "socket": 5}

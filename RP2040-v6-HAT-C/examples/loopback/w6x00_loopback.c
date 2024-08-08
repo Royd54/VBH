@@ -16,12 +16,18 @@
 #include <hardware/sync.h>
 #include <time.h>
 
-#include "tcp_api.h"
-#include "tcp_server.h"
-#include "UART_Communication.h"
-
 #include "hardware/uart.h"
 #include "hardware/irq.h"
+
+#include "tcp_server.h"
+#include "tcp_api.h"
+#include "UART_Communication.h"
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// #include "spi_master.c"
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /* Clock */
 #define PLL_SYS_KHZ (133 * 1000)
@@ -148,6 +154,12 @@ int main()
     printf("Compiled @ %s, %s\n", __DATE__, __TIME__);
     printf("==========================================================\n");
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // can_setup();
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     wizchip_spi_initialize();
     wizchip_cris_initialize();
     
@@ -188,6 +200,26 @@ int main()
     init_button_settings();
     bool systemOff = true;
 
+    // addPanelSettings(&head, createPanelSettings("Panel1", "TypeA", 50, 100, 10, 5, 3, 1234, 5678, 9101, 1121, 3141, 5161));
+    // addPanelSettings(&head, createPanelSettings("Panel2", "TypeB", 70, 200, 20, 10, 6, 2234, 6678, 1011, 2121, 4141, 6161));
+
+    // retrieved = getPanelSettings(head, "Panel1");
+    // if (retrieved != NULL) {
+    //     printf("Retrieved Panel1:\n");
+    //     printf("name: %s, panelType: %s, sfx_volume: %d, max_brightness: %d, time_out: %d, radar_enable_delay: %d, number_of_knocks: %d, radar_sensor: %u, sfx_actuator: %u, knock_sensor: %u, module_A: %u, module_B: %u, module_C: %u\n",
+    //            retrieved->name, retrieved->panelType, retrieved->sfx_volume, retrieved->max_brightness, retrieved->time_out, retrieved->radar_enable_delay, retrieved->number_of_knocks, retrieved->radar_sensor, retrieved->sfx_actuator, retrieved->knock_sensor, retrieved->module_A, retrieved->module_B, retrieved->module_C);
+    // } else {
+    //     printf("Panel1 not found\n");
+    // }
+
+    // retrieved = getPanelSettings(head, "Panel2");
+    // if (retrieved != NULL) {
+    //     printf("Retrieved Panel2:\n");
+    //     printf("name: %s, panelType: %s, sfx_volume: %d, max_brightness: %d, time_out: %d, radar_enable_delay: %d, number_of_knocks: %d, radar_sensor: %u, sfx_actuator: %u, knock_sensor: %u, module_A: %u, module_B: %u, module_C: %u\n",
+    //            retrieved->name, retrieved->panelType, retrieved->sfx_volume, retrieved->max_brightness, retrieved->time_out, retrieved->radar_enable_delay, retrieved->number_of_knocks, retrieved->radar_sensor, retrieved->sfx_actuator, retrieved->knock_sensor, retrieved->module_A, retrieved->module_B, retrieved->module_C);
+    // } else {
+    //     printf("Panel1 not found\n");
+    // }
     /* Infinite loop */
     while (1)
     {
@@ -207,6 +239,16 @@ int main()
         if(systemOff == true){
             blinkLogo();
         }
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // can_send_message();
+        // sleep_ms(100);
+
+        // can_receive_message();
+        // sleep_ms(1000);
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////
     }
 }
 

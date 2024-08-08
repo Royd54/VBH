@@ -8,6 +8,7 @@
 #define NUM_BUTTONS 18
 #define NUM_COMMANDS 17
 #define DATA_BUF_SIZE 2048 // Max size of the data buffer
+#define NAME_SIZE 50
 
 extern int32_t init_api_socket(uint8_t sn, uint8_t *buf, uint16_t port);
 extern void api_socket_behaviour(uint8_t *buf, datasize_t len, char *item);
@@ -60,5 +61,41 @@ typedef struct {
 
 // Array of command handlers
 extern CommandHandler command_handlers[];
+
+typedef struct {
+    char name[NAME_SIZE];
+    char panelType[NAME_SIZE];
+    int sfx_volume;
+    int max_brightness;
+    int time_out;
+    int radar_enable_delay;
+    int number_of_knocks;
+    uint16_t radar_sensor;
+    uint16_t sfx_actuator;
+    uint16_t knock_sensor;
+    uint16_t module_A;
+    uint16_t module_B;
+    uint16_t module_C;
+} PanelSettings;
+
+extern PanelSettings* retrieved;
+
+typedef struct Node {
+    PanelSettings* settings;
+    struct Node* next;
+} Node;
+
+extern Node* head;
+
+PanelSettings* createPanelSettings(
+    const char* name, const char* panelType, int sfx_volume, int max_brightness,
+    int time_out, int radar_enable_delay, int number_of_knocks,
+    uint16_t radar_sensor, uint16_t sfx_actuator, uint16_t knock_sensor,
+    uint16_t module_A, uint16_t module_B, uint16_t module_C
+);
+void addPanelSettings(Node** head, PanelSettings* settings);
+PanelSettings* getPanelSettings(Node* head, const char* name);
+void api_socket_behaviour_Settings(uint8_t *buf, size_t len, char *item);
+void updatePanelConfig(cJSON *object);
 
 #endif
