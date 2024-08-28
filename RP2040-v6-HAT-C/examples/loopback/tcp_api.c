@@ -50,29 +50,12 @@ CommandHandler command_handlers[] = {
     // Add more commands as needed
 };
 
-
 ///////////////////////////////
 ////////////////////////////////
 //////////////////////////////
 ///////////////////////////////
 ////////////////////////////////
 //////////////////////////////
-// typedef struct {
-//     char name[NAME_SIZE];
-//     char panelType[NAME_SIZE];
-//     int sfx_volume;
-//     int max_brightness;
-//     int time_out;
-//     int radar_enable_delay;
-//     int number_of_knocks;
-//     uint16_t radar_sensor;
-//     uint16_t sfx_actuator;
-//     uint16_t knock_sensor;
-//     uint16_t module_A;
-//     uint16_t module_B;
-//     uint16_t module_C;
-// } PanelSettings;
-
 PanelSettings* retrieved = NULL;
 
 PanelSettings* createPanelSettings(
@@ -104,11 +87,6 @@ PanelSettings* createPanelSettings(
     return new_settings;
 }
 
-// typedef struct Node {
-//     PanelSettings* settings;
-//     struct Node* next;
-// } Node;
-
 Node* head = NULL;
 
 void addPanelSettings(Node** head, PanelSettings* settings) {
@@ -132,6 +110,268 @@ PanelSettings* getPanelSettings(Node* head, const char* name) {
     }
     return NULL; // Not found
 }
+
+////////////////////////////////////////////////////////Properties
+
+NodeProperties* headProperties = NULL;
+
+PanelProperties* createPanelProperties(const char* panelType) {
+    PanelProperties* settings = (PanelProperties*)malloc(sizeof(PanelProperties));
+    if (settings == NULL) {
+        printf("Memory allocation failed for PanelProperties\n");
+        exit(1);
+    }
+    strncpy(settings->panelType, panelType, NAME_SIZE - 1);
+    settings->panelType[NAME_SIZE - 1] = '\0';
+    settings->buttonProperties = NULL;
+    settings->buttonCount = 0;
+    settings->buttonCapacity = 0;
+    return settings;
+}
+
+ButtonProperties* createButtonProperties(cJSON *object) {
+    ButtonProperties* button = (ButtonProperties*)malloc(sizeof(ButtonProperties));
+    if (button == NULL) {
+        printf("Memory allocation failed for ButtonProperties\n");
+        exit(1);
+    }
+
+    cJSON *buttonType = cJSON_GetObjectItem(object, "type");
+    cJSON *released = cJSON_GetObjectItem(object, "released");
+    cJSON *pressed = cJSON_GetObjectItem(object, "pressed");
+    cJSON *blink = cJSON_GetObjectItem(object, "blink");
+    cJSON *active = cJSON_GetObjectItem(object, "active");
+    cJSON *blink_hi_low_time = cJSON_GetObjectItem(object, "blink_hi_low_time");
+    cJSON *pressEvent = cJSON_GetObjectItem(object, "press()");
+    cJSON *cleared = cJSON_GetObjectItem(object, "cleared");
+    cJSON *selected = cJSON_GetObjectItem(object, "selected");
+    cJSON *unselected = cJSON_GetObjectItem(object, "unselected");
+    cJSON *held_time = cJSON_GetObjectItem(object, "held_time");
+    cJSON *heldEvent = cJSON_GetObjectItem(object, "held()");
+    cJSON *fade_out = cJSON_GetObjectItem(object, "fade_out");
+    cJSON *fade_in = cJSON_GetObjectItem(object, "fade_in");
+    cJSON *fade_high_low_time = cJSON_GetObjectItem(object, "fade_high_low_time");
+
+    strncpy(button->buttonType, object->string, NAME_SIZE - 1);
+    button->buttonType[NAME_SIZE - 1] = '\0'; // Ensure null termination  
+    if(released != NULL){button->released[0] = cJSON_GetArrayItem(released, 0)->valueint; button->released[1] = cJSON_GetArrayItem(released, 1)->valueint;}
+    if(pressed != NULL){ button->pressed[0] = cJSON_GetArrayItem(pressed, 0)->valueint; button->pressed[1] = cJSON_GetArrayItem(pressed, 1)->valueint;}
+    if(blink != NULL){ button->blink[0] = cJSON_GetArrayItem(blink, 0)->valueint; button->blink[1] = cJSON_GetArrayItem(blink, 1)->valueint;}
+    if(active != NULL){ button->active[0] = cJSON_GetArrayItem(active, 0)->valueint; button->active[1] = cJSON_GetArrayItem(active, 1)->valueint;}
+    if(blink_hi_low_time != NULL){ button->blink_hi_low_time[0] = cJSON_GetArrayItem(blink_hi_low_time, 0)->valueint; button->blink_hi_low_time[1] = cJSON_GetArrayItem(blink_hi_low_time, 1)->valueint;}
+    if(pressEvent != NULL){ strncpy(button->pressEvent, cJSON_GetArrayItem(pressEvent, 0)->valuestring, NAME_SIZE - 1); } 
+    button->pressEvent[NAME_SIZE - 1] = '\0'; // Ensure null termination 
+    if(cleared != NULL){ button->cleared[0] = cJSON_GetArrayItem(cleared, 0)->valueint; button->cleared[1] = cJSON_GetArrayItem(cleared, 1)->valueint;}
+    if(selected != NULL){ button->selected[0] = cJSON_GetArrayItem(selected, 0)->valueint; button->selected[1] = cJSON_GetArrayItem(selected, 1)->valueint;}
+    if(unselected != NULL){ button->unselected[0] = cJSON_GetArrayItem(unselected, 0)->valueint; button->unselected[1] = cJSON_GetArrayItem(unselected, 1)->valueint;}
+    if(held_time != NULL){ button->held_time = held_time->valueint;}
+    if(heldEvent != NULL){ strncpy(button->heldEvent, cJSON_GetArrayItem(heldEvent, 0)->valuestring, NAME_SIZE - 1);}
+    button->heldEvent[NAME_SIZE - 1] = '\0'; // Ensure null termination
+    if(fade_out != NULL){ button->fade_out[0] = cJSON_GetArrayItem(fade_out, 0)->valueint; button->fade_out[1] = cJSON_GetArrayItem(fade_out, 1)->valueint;}
+    if(fade_in != NULL){ button->fade_in[0] = cJSON_GetArrayItem(fade_in, 0)->valueint; button->fade_in[1] = cJSON_GetArrayItem(fade_in, 1)->valueint;}
+    if(fade_high_low_time != NULL){ button->fade_high_low_time[0] = cJSON_GetArrayItem(fade_high_low_time, 0)->valueint; button->fade_high_low_time[1] = cJSON_GetArrayItem(fade_high_low_time, 1)->valueint;}
+    return button;
+}
+
+void addButtonProperties(PanelProperties* settings, ButtonProperties* button) {
+    if (settings->buttonCount >= settings->buttonCapacity) {
+        int newCapacity = settings->buttonCount == 0 ? 1 : settings->buttonCapacity * 2;
+        ButtonProperties** newPages = (ButtonProperties**)realloc(settings->buttonProperties, sizeof(ButtonProperties*) * newCapacity);
+        if (newPages == NULL) {
+            printf("Memory allocation failed during reallocation\n");
+            exit(1);
+        }
+        settings->buttonProperties = newPages;
+        settings->buttonCapacity = newCapacity;
+    }
+    settings->buttonProperties[settings->buttonCount] = button;
+    settings->buttonCount++;
+}
+
+ButtonProperties* getButtonPorperties(PanelProperties* settings, const char* buttonType) {
+    for (int i = 0; i < settings->buttonCount; i++) {
+        if (strcmp(settings->buttonProperties[i]->buttonType, buttonType) == 0) {
+            return settings->buttonProperties[i];
+        }
+    }
+    return NULL;
+}
+
+PanelProperties* GetPanelPropertiesByType(const char* panelType) {
+    NodeProperties* current = headProperties;
+    while (current != NULL) {
+        if (strcmp(current->settings->panelType, panelType) == 0) {
+            return current->settings;
+        }
+        current = current->next; 
+    }
+    return NULL;
+}
+
+void addPanelProperties(PanelProperties* settings) {
+    NodeProperties* newNode = (NodeProperties*)malloc(sizeof(NodeProperties));
+    if (newNode == NULL) {
+        printf("Memory allocation failed for NodeProperties\n");
+        exit(1);
+    }
+    newNode->settings = settings;
+    newNode->next = headProperties;
+    headProperties = newNode;
+}
+
+void freePanelProperties(PanelProperties* settings) {
+    for (int i = 0; i < settings->buttonCount; i++) {
+        free(settings->buttonProperties[i]);
+    }
+    free(settings->buttonProperties);
+    free(settings);
+}
+
+void printButtonProperties(PanelProperties* settings) {
+    for (int i = 0; i < settings->buttonCount; i++) {
+        ButtonProperties* page = settings->buttonProperties[i];
+        printf("Button type: %s, Active: %d,%d\n", page->buttonType, page->active[0], page->active[1]);
+        if (page->pressEvent[0] != '\0') {
+            printf("Press Event: %s\n", page->pressEvent);
+        }
+    }
+}
+
+void updatePanelProperties(cJSON *object) {
+    // Check if a GuiSettings instance already exists for this panel type
+    PanelProperties* properties = GetPanelPropertiesByType(object->string);
+    if (properties == NULL) {
+        // If not, create a new GuiSettings instance and add it to the list
+        properties = createPanelProperties(object->string);
+        addPanelProperties(properties);
+    }
+
+    cJSON *child = object->child;
+    while (child != NULL) {
+        printf("Creating button type: %s\n", child->string);
+        addButtonProperties(properties, createButtonProperties(child));
+        child = child->next;
+    }
+}
+////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////GUI
+
+NodeGUI* headGUI = NULL;
+
+// Function to create a new GuiSettings instance
+GuiSettings* createGuiSettings(const char* panelType) {
+    GuiSettings* settings = (GuiSettings*)malloc(sizeof(GuiSettings));
+    if (settings == NULL) {
+        printf("Memory allocation failed for GuiSettings\n");
+        exit(1);
+    }
+    strncpy(settings->panelType, panelType, NAME_SIZE - 1);
+    settings->panelType[NAME_SIZE - 1] = '\0';
+    settings->pages = NULL;
+    settings->pageCount = 0;
+    settings->pageCapacity = 0;
+    return settings;
+}
+
+// Function to create a new GuiSettingsPage instance
+GuiSettingsPage* createGuiSettingsPage(cJSON *object) {
+    GuiSettingsPage* page = (GuiSettingsPage*)malloc(sizeof(GuiSettingsPage));
+    if (page == NULL) {
+        printf("Memory allocation failed for GuiSettingsPage\n");
+        exit(1);
+    }
+    strncpy(page->pageName, object->string, NAME_SIZE - 1);
+    page->pageName[NAME_SIZE - 1] = '\0'; // Ensure null termination
+    page->logo = cJSON_GetObjectItem(object, "logo")->valueint;
+    page->power = cJSON_GetObjectItem(object, "power")->valueint;
+    page->service = cJSON_GetObjectItem(object, "service")->valueint;
+    page->tv_on_off = cJSON_GetObjectItem(object, "tv_on_off")->valueint;
+    page->hvac = cJSON_GetObjectItem(object, "hvac")->valueint;
+    page->shutters = cJSON_GetObjectItem(object, "shutters")->valueint;
+    page->audio = cJSON_GetObjectItem(object, "audio")->valueint;
+    page->lights = cJSON_GetObjectItem(object, "lights")->valueint;
+    page->up = cJSON_GetObjectItem(object, "up")->valueint;
+    page->down = cJSON_GetObjectItem(object, "down")->valueint;
+    page->play = cJSON_GetObjectItem(object, "play")->valueint;
+    page->pause = cJSON_GetObjectItem(object, "pause")->valueint;
+    page->forward = cJSON_GetObjectItem(object, "forward")->valueint;
+    page->back = cJSON_GetObjectItem(object, "back")->valueint;
+    page->day = cJSON_GetObjectItem(object, "day")->valueint;
+    page->sunset = cJSON_GetObjectItem(object, "sunset")->valueint;
+    page->evening = cJSON_GetObjectItem(object, "evening")->valueint;
+    page->night = cJSON_GetObjectItem(object, "night")->valueint;
+    page->seventeenC = cJSON_GetObjectItem(object, "seventeenC")->valueint;
+    page->eightteenC = cJSON_GetObjectItem(object, "eightteenC")->valueint;
+    page->nineteenC = cJSON_GetObjectItem(object, "nineteenC")->valueint;
+    page->twentyC = cJSON_GetObjectItem(object, "twentyC")->valueint;
+    page->twentyoneC = cJSON_GetObjectItem(object, "twentyoneC")->valueint;
+    page->twentytwoC = cJSON_GetObjectItem(object, "twentytwoC")->valueint;
+    page->twentythreeC = cJSON_GetObjectItem(object, "twentythreeC")->valueint;
+    page->twentyfourC = cJSON_GetObjectItem(object, "twentyfourC")->valueint;
+    
+    return page;
+}
+
+// Function to add a page to GuiSettings
+void addGuiSettingsPage(GuiSettings* settings, GuiSettingsPage* page) {
+    if (settings->pageCount >= settings->pageCapacity) {
+        int newCapacity = settings->pageCapacity == 0 ? 1 : settings->pageCapacity * 2;
+        GuiSettingsPage** newPages = (GuiSettingsPage**)realloc(settings->pages, sizeof(GuiSettingsPage*) * newCapacity);
+        if (newPages == NULL) {
+            printf("Memory allocation failed during reallocation\n");
+            exit(1);
+        }
+        settings->pages = newPages;
+        settings->pageCapacity = newCapacity;
+    }
+    settings->pages[settings->pageCount] = page;
+    settings->pageCount++;
+}
+
+// Function to retrieve a page by name
+GuiSettingsPage* getGuiSettingsPage(GuiSettings* settings, const char* pageName) {
+    for (int i = 0; i < settings->pageCount; i++) {
+        if (strcmp(settings->pages[i]->pageName, pageName) == 0) {
+            return settings->pages[i];
+        }
+    }
+    return NULL;
+}
+
+// Function to retrieve GuiSettings by panel type
+GuiSettings* getGuiSettingsByType(const char* panelType) {
+    NodeGUI* current = headGUI;
+    while (current != NULL) {
+        if (strcmp(current->settings->panelType, panelType) == 0) {
+            return current->settings;
+        }
+        current = current->next; 
+    }
+    return NULL;
+}
+
+// Function to add a GuiSettings instance to the list
+void addGuiSettingsToList(GuiSettings* settings) {
+    NodeGUI* newNode = (NodeGUI*)malloc(sizeof(NodeGUI));
+    if (newNode == NULL) {
+        printf("Memory allocation failed for NodeGUI\n");
+        exit(1);
+    }
+    newNode->settings = settings;
+    newNode->next = headGUI;
+    headGUI = newNode;
+}
+
+// Function to free memory allocated for GuiSettings
+void freeGuiSettings(GuiSettings* settings) {
+    for (int i = 0; i < settings->pageCount; i++) {
+        free(settings->pages[i]);
+    }
+    free(settings->pages);
+    free(settings);
+}
+
 ///////////////////////////////
 ////////////////////////////////
 //////////////////////////////
@@ -327,17 +567,49 @@ void api_socket_behaviour_Settings(uint8_t *buf, size_t len, char *item){
                     cJSON *child = hw_config->child;
                     while (child != NULL) {
                         printf("Found object: %s\n", child->string);
+                        updatePanelData(child);
+                        child = child->next;
+                    }
+                    // retrieved = getPanelSettings(head, "PanelWall");
+                    // printf("name: %s, panelType: %s, sfx_volume: %d, max_brightness: %d, time_out: %d, radar_enable_delay: %d, number_of_knocks: %d, radar_sensor: %u, sfx_actuator: %u, knock_sensor: %u, module_A: %u, module_B: %u, module_C: %u\n",
+                    // retrieved->name, retrieved->panelType, retrieved->sfx_volume, retrieved->max_brightness, retrieved->time_out, retrieved->radar_enable_delay, retrieved->number_of_knocks, retrieved->radar_sensor, retrieved->sfx_actuator, retrieved->knock_sensor, retrieved->module_A, retrieved->module_B, retrieved->module_C);
+                    // retrieved = getPanelSettings(head, "PanelTable");
+                    // printf("name: %s, panelType: %s, sfx_volume: %d, max_brightness: %d, time_out: %d, radar_enable_delay: %d, number_of_knocks: %d, radar_sensor: %u, sfx_actuator: %u, knock_sensor: %u, module_A: %u, module_B: %u, module_C: %u\n",
+                    // retrieved->name, retrieved->panelType, retrieved->sfx_volume, retrieved->max_brightness, retrieved->time_out, retrieved->radar_enable_delay, retrieved->number_of_knocks, retrieved->radar_sensor, retrieved->sfx_actuator, retrieved->knock_sensor, retrieved->module_A, retrieved->module_B, retrieved->module_C);
+                } else {
+                    printf("hw_config object not found\n");
+                }
+                cJSON *gui_config = cJSON_GetObjectItem(control_elements, "gui_config");
+                if (gui_config != NULL) {
+                    cJSON *child = gui_config->child;
+                    while (child != NULL) {
+                        printf("Found object: %s\n", child->string);
                         updatePanelConfig(child);
                         child = child->next;
                     }
-                    retrieved = getPanelSettings(head, "PanelWall");
-                    printf("name: %s, panelType: %s, sfx_volume: %d, max_brightness: %d, time_out: %d, radar_enable_delay: %d, number_of_knocks: %d, radar_sensor: %u, sfx_actuator: %u, knock_sensor: %u, module_A: %u, module_B: %u, module_C: %u\n",
-               retrieved->name, retrieved->panelType, retrieved->sfx_volume, retrieved->max_brightness, retrieved->time_out, retrieved->radar_enable_delay, retrieved->number_of_knocks, retrieved->radar_sensor, retrieved->sfx_actuator, retrieved->knock_sensor, retrieved->module_A, retrieved->module_B, retrieved->module_C);
-               retrieved = getPanelSettings(head, "PanelTable");
-               printf("name: %s, panelType: %s, sfx_volume: %d, max_brightness: %d, time_out: %d, radar_enable_delay: %d, number_of_knocks: %d, radar_sensor: %u, sfx_actuator: %u, knock_sensor: %u, module_A: %u, module_B: %u, module_C: %u\n",
-               retrieved->name, retrieved->panelType, retrieved->sfx_volume, retrieved->max_brightness, retrieved->time_out, retrieved->radar_enable_delay, retrieved->number_of_knocks, retrieved->radar_sensor, retrieved->sfx_actuator, retrieved->knock_sensor, retrieved->module_A, retrieved->module_B, retrieved->module_C);
+
+                    GuiSettings* settings = getGuiSettingsByType("type1");
+                    if (settings != NULL) {
+                        printGuiSettingsPages(settings);
+                    }
                 } else {
-                    printf("hw_config object not found\n");
+                    printf("gui_config object not found\n");
+                }
+                cJSON *panel_properties = cJSON_GetObjectItem(control_elements, "button_properties");
+                if (panel_properties != NULL) {
+                    cJSON *child = panel_properties->child;
+                    while (child != NULL) {
+                        printf("Found object: %s\n", child->string);
+                        updatePanelProperties(child);
+                        child = child->next;
+                    }
+
+                    PanelProperties* properties = GetPanelPropertiesByType("type1");
+                    if (properties != NULL) {
+                        printButtonProperties(properties);
+                    }
+                } else {
+                    printf("panel_properties object not found\n");
                 }
             } else {
                 printf("control_elements object not found\n");
@@ -349,7 +621,32 @@ void api_socket_behaviour_Settings(uint8_t *buf, size_t len, char *item){
     }
 }
 
+// Function to print all pages in a GuiSettings instance
+void printGuiSettingsPages(GuiSettings* settings) {
+    for (int i = 0; i < settings->pageCount; i++) {
+        GuiSettingsPage* page = settings->pages[i];
+        printf("Page Name: %s, Power: %d, Logo: %d\n", page->pageName, page->power, page->logo);
+    }
+}
+
 void updatePanelConfig(cJSON *object) {
+    // Check if a GuiSettings instance already exists for this panel type
+    GuiSettings* gui = getGuiSettingsByType(object->string);
+    if (gui == NULL) {
+        // If not, create a new GuiSettings instance and add it to the list
+        gui = createGuiSettings(object->string);
+        addGuiSettingsToList(gui);
+    }
+
+    cJSON *child = object->child;
+    while (child != NULL) {
+        printf("Creating page: %s\n", child->string);
+        addGuiSettingsPage(gui, createGuiSettingsPage(child));
+        child = child->next;
+    }
+}
+
+void updatePanelData(cJSON *object) {
     cJSON *panelName = cJSON_GetObjectItem(object, "name");
     cJSON *panelType = cJSON_GetObjectItem(object, "type");
     cJSON *sfx_volume = cJSON_GetObjectItem(object, "sfx_volume");
@@ -368,6 +665,38 @@ void updatePanelConfig(cJSON *object) {
     radar_enable_delay->valueint, number_of_knocks->valueint,
     radar_sensor->valueint, sfx_actuator->valueint, knock_sensor->valueint, module_A->valueint, module_B->valueint, module_C->valueint));
 }
+
+
+/*
+    cJSON *panelType = cJSON_GetObjectItem(object, "type");
+    cJSON *released = cJSON_GetObjectItem(object, "released");
+    cJSON *pressed = cJSON_GetObjectItem(object, "pressed");
+    cJSON *blink = cJSON_GetObjectItem(object, "blink");
+    cJSON *active = cJSON_GetObjectItem(object, "active");
+    cJSON *blink_hi_low_time = cJSON_GetObjectItem(object, "blink_hi_low_time");
+    cJSON *pressEvent = cJSON_GetObjectItem(object, "pressEvent");
+    cJSON *cleared = cJSON_GetObjectItem(object, "cleared");
+    cJSON *selected = cJSON_GetObjectItem(object, "selected");
+    cJSON *unselected = cJSON_GetObjectItem(object, "unselected");
+    cJSON *held_time = cJSON_GetObjectItem(object, "held_time");
+    cJSON *heldEvent = cJSON_GetObjectItem(object, "heldEvent");
+    cJSON *fade_out = cJSON_GetObjectItem(object, "fade_out");
+    cJSON *fade_in = cJSON_GetObjectItem(object, "fade_in");
+    cJSON *fade_high_low_time = cJSON_GetObjectItem(object, "fade_high_low_time");
+    addPanelProperties(&headPanelProperties, createPanelProperties(panelType->valuestring, cJSON_GetArrayItem(released, 0)->valueint,
+    cJSON_GetArrayItem(released, 1)->valueint, cJSON_GetArrayItem(pressed, 0)->valueint,cJSON_GetArrayItem(pressed, 1)->valueint,
+    cJSON_GetArrayItem(blink, 0)->valueint,cJSON_GetArrayItem(blink, 1)->valueint,
+    cJSON_GetArrayItem(active, 0)->valueint,cJSON_GetArrayItem(active, 1)->valueint,
+    cJSON_GetArrayItem(blink_hi_low_time, 0)->valueint,cJSON_GetArrayItem(blink_hi_low_time, 1)->valueint,
+    pressEvent->valuestring,
+    cJSON_GetArrayItem(cleared, 0)->valueint,cJSON_GetArrayItem(cleared, 1)->valueint,
+    cJSON_GetArrayItem(selected, 0)->valueint,cJSON_GetArrayItem(selected, 1)->valueint,
+    cJSON_GetArrayItem(unselected, 0)->valueint,cJSON_GetArrayItem(unselected, 1)->valueint,
+    held_time->valueint, heldEvent->valuestring,
+    cJSON_GetArrayItem(fade_out, 0)->valueint,cJSON_GetArrayItem(fade_out, 1)->valueint,
+    cJSON_GetArrayItem(fade_in, 0)->valueint,cJSON_GetArrayItem(fade_in, 1)->valueint,
+    cJSON_GetArrayItem(fade_high_low_time, 0)->valueint,cJSON_GetArrayItem(fade_high_low_time, 1)->valueint));
+*/
 
 // Function to handle the API command
 void api_command(const char *command, cJSON *object) {
